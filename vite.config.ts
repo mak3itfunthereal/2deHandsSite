@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://eindproject-meld.runasp.net',
+        target: 'https://eindproject-meld.runasp.net',
         changeOrigin: true,
       },
     },
