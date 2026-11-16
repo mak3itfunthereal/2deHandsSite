@@ -1,0 +1,274 @@
+/* ==========================================================================
+   Bidzaar Modern UI Animations
+   ========================================================================== */
+
+/* 1. Popovers, Menus & Dropdowns Entrance */
+@keyframes popoverIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.location-popover,
+.profile-menu,
+.notification-menu {
+  animation: popoverIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+  transform-origin: top right;
+}
+
+/* 2. Interactive Heart Pop Pulse */
+@keyframes heartPop {
+  0% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.35) rotate(-6deg);
+  }
+  65% {
+    transform: scale(0.92) rotate(3deg);
+  }
+  100% {
+    transform: scale(1) rotate(0);
+  }
+}
+
+.heart-btn.liked svg,
+.heart-button.liked svg {
+  animation: heartPop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* 3. Product Cards Entry & Smooth Hover */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.product-card {
+  animation: fadeInUp 0.38s cubic-bezier(0.16, 1, 0.3, 1) both;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 36px rgba(66, 35, 112, 0.16);
+}
+
+.product-card .product-image img {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.product-card:hover .product-image img {
+  transform: scale(1.06);
+}
+
+/* 4. Modals, Backdrops & Bottom Sheets */
+@keyframes backdropFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes sheetSlideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.modal-backdrop,
+.sheet-backdrop,
+.cookie-backdrop {
+  animation: backdropFadeIn 0.24s ease-out both;
+}
+
+.modal,
+.cookie-card {
+  animation: modalScaleIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.bottom-sheet {
+  animation: sheetSlideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* 5. Toasts & Action Notices */
+@keyframes toastSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(22px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.action-notice,
+.toast {
+  animation: toastSlideUp 0.32s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+/* 6. Chat Message Bubbles */
+@keyframes bubbleIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.messages .bubble {
+  animation: bubbleIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* 7. Floating Stat Badge in Hero */
+@keyframes gentleFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.hero-stat {
+  animation: gentleFloat 4.2s ease-in-out infinite;
+}
+
+/* 8. Notification Badge Pulse */
+@keyframes badgePulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.18);
+  }
+}
+
+.badge-wrap i {
+  animation: badgePulse 2.8s ease-in-out infinite;
+}
+
+/* 9. Skeleton Loader Shimmer */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--line) 0%,
+    rgba(255, 255, 255, 0.45) 50%,
+    var(--line) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s infinite ease-in-out;
+}
+
+.dark .skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--line) 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    var(--line) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s infinite ease-in-out;
+}
+
+.skeleton-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.skeleton-image {
+  aspect-ratio: 4 / 3;
+  width: 100%;
+}
+
+.skeleton-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skeleton-line {
+  height: 14px;
+  border-radius: 6px;
+}
+
+/* 9. Category Icon Hover Bounce */
+.categories button {
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.categories button:hover {
+  transform: translateY(-4px) scale(1.02);
+}
+
+/* 10. Shimmer Skeleton Loader */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-loading {
+  background: linear-gradient(90deg, var(--line) 25%, var(--canvas) 50%, var(--line) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s infinite;
+}
+
+/* 11. Respect Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

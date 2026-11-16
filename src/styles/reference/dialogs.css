@@ -1,0 +1,88 @@
+.cookie-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(18, 12, 28, 0.48);
+  backdrop-filter: blur(3px);
+}
+.cookie-card {
+  width: min(820px, 100%);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: 0 24px 70px rgba(20, 10, 35, 0.25);
+  border-radius: 17px;
+  padding: 25px 27px;
+}
+.cookie-heading {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.cookie-heading > span {
+  width: 47px;
+  height: 47px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+.cookie-heading h2 {
+  font-size: 23px;
+  margin: 0;
+}
+.cookie-card > p {
+  color: var(--muted);
+  line-height: 1.55;
+  margin: 16px 0 20px;
+  max-width: 72ch;
+}
+.cookie-options {
+  border-block: 1px solid var(--line);
+  margin-bottom: 20px;
+}
+.cookie-options label {
+  min-height: 66px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: 1px solid var(--line);
+}
+.cookie-options label:last-child {
+  border-bottom: 0;
+}
+.cookie-options label > span {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.cookie-options small {
+  color: var(--muted);
+}
+.cookie-options input {
+  width: 40px;
+  height: 22px;
+  accent-color: var(--primary);
+}
+.cookie-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+.cookie-actions > div {
+  display: flex;
+  gap: 8px;
+}
+.cookie-note {
+  display: block;
+  color: var(--muted);
+  margin-top: 14px;
+}
+
