@@ -1,0 +1,96 @@
+.login-page {
+  min-height: calc(100vh - 127px);
+  display: grid;
+  place-items: center;
+  padding: 45px 16px 80px;
+  background: linear-gradient(140deg, var(--primary-soft), var(--canvas) 55%);
+}
+.login-card {
+  width: min(440px, 100%);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  border-radius: 16px;
+  padding: 34px;
+}
+.login-mark {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border-radius: 13px 13px 13px 4px;
+  color: white;
+  background: var(--primary);
+  font: 800 27px "Manrope";
+  margin-bottom: 24px;
+}
+.login-card h1 {
+  font-size: 30px;
+  margin-bottom: 8px;
+}
+.login-card > p {
+  color: var(--muted);
+}
+.login-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 25px;
+}
+.login-card form label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.login-card input {
+  height: 48px;
+  border: 1px solid var(--line);
+  background: var(--canvas);
+  border-radius: 9px;
+  padding: 0 12px;
+  outline: 0;
+}
+.login-card form .primary,
+.social-login {
+  width: 100%;
+}
+.forgot {
+  border: 0;
+  background: transparent;
+  color: var(--primary);
+  align-self: flex-end;
+  padding: 0;
+  font-size: 12px;
+}
+.login-divider {
+  border-top: 1px solid var(--line);
+  text-align: center;
+  margin: 26px 0;
+}
+.login-divider span {
+  position: relative;
+  top: -11px;
+  background: var(--surface);
+  color: var(--muted);
+  padding: 0 10px;
+  font-size: 12px;
+}
+.register-link {
+  text-align: center;
+  font-size: 12px;
+  margin: 20px 0 0 !important;
+}
+.register-link button {
+  border: 0;
+  background: transparent;
+  color: var(--primary);
+  font-weight: 700;
+}
+.register-card {
+  width: min(500px, 100%);
+}
+.register-card .login-mark {
+  font-size: 17px;
+}

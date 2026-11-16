@@ -1,0 +1,6 @@
+@import "./home/base.css";
+@import "./home/hero.css";
+@import "./home/categories.css";
+@import "./home/listings.css";
+@import "./home/banners.css";
+@import "./home/responsive.css";
