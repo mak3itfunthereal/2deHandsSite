@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { LocationPreference, Page, UserProfile } from "../types";
 import { userFullName, userInitials } from "../utils/marketplace";
 import { Icon } from "./Icon";
+import { ThemeToggle } from "./ThemeToggle";
 import { Logo } from "./Logo";
 import { LocationControls } from "./LocationControls";
 
@@ -362,13 +363,7 @@ export function Header({
           </div>
         )}
         <nav className="actions">
-          <button
-            className="icon-btn theme"
-            onClick={() => setDark(!dark)}
-            aria-label="Toggle theme"
-          >
-            <Icon name={dark ? "sun" : "moon"} />
-          </button>
+          <ThemeToggle dark={dark} setDark={setDark} />
           <button className="icon-btn" aria-label="Favorites" onClick={() => setPage("account")}>
             <Icon name="heart" />
           </button>
@@ -460,6 +455,7 @@ export function Header({
           </button>
         </nav>
         <div className="mobile-actions">
+          <ThemeToggle dark={dark} setDark={setDark} />
           <button className="icon-btn" onClick={() => setPage("search")}           aria-label="Search">
             <Icon name="search" />
           </button>

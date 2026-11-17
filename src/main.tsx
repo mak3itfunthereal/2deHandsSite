@@ -4,6 +4,7 @@ import App from './App'
 import './styles/reference.css'
 import './styles/homepage.css'
 import './styles/animations.css'
+import './styles/dark-mode.css'
 
 const root = document.getElementById('root')
 

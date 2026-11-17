@@ -1,0 +1,82 @@
+/*
+ * Dark mode fixes (work item 521).
+ * Most colors already come from the CSS variables in reference/base.css.
+ * This file only fixes the places that still had hard-coded LIGHT colors,
+ * so they look clean in dark mode too. Loaded last in main.tsx.
+ */
+
+/* Tell the browser which theme we use, so scrollbars and form controls match */
+:root {
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+/* Grey placeholder behind product images */
+[data-theme="dark"] .product-image {
+  background: var(--line);
+}
+
+/* Loading skeleton shimmer (the old ".dark" selector never matched) */
+[data-theme="dark"] .skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--line) 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    var(--line) 100%
+  );
+  background-size: 200% 100%;
+}
+
+/* Pastel category tiles on the home page */
+[data-theme="dark"] .cat-1,
+[data-theme="dark"] .cat-5 {
+  background: #3b2f22;
+  color: #f0d6b8;
+}
+[data-theme="dark"] .cat-2,
+[data-theme="dark"] .cat-6 {
+  background: #22313d;
+  color: #bcd6ea;
+}
+[data-theme="dark"] .cat-3,
+[data-theme="dark"] .cat-7 {
+  background: #352a34;
+  color: #e6cde1;
+}
+
+/* Light purple boxes */
+[data-theme="dark"] .trust-visual,
+[data-theme="dark"] .hero-art:before {
+  background: var(--primary-soft);
+}
+[data-theme="dark"] .profile-cover {
+  background: linear-gradient(120deg, #3a2a5c, #2a2140 55%, #33264f);
+}
+
+/* Yellow tip boxes on the sell page */
+[data-theme="dark"] .tip {
+  background: #45361e;
+  color: #f4ca82;
+}
+
+/* Map placeholder on the sell page */
+[data-theme="dark"] .mini-map {
+  background: linear-gradient(25deg, #1f2b28, #26302c);
+}
+
+/* "Featured listing" tag on product cards */
+[data-theme="dark"] .top-tag {
+  background: #45361e;
+  color: #f4ca82;
+}
+
+/* Heart button on product cards */
+[data-theme="dark"] .heart-btn {
+  background: rgba(25, 39, 36, 0.92);
+  color: var(--ink);
+}
+[data-theme="dark"] .heart-btn.liked {
+  color: #ff6b73;
+}
