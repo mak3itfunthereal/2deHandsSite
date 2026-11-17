@@ -21,17 +21,17 @@ export function MobileNav({
       </button>
       <button className={page === "search" ? "active" : ""} onClick={() => setPage("search")}>
         <Icon name="search" />
-        <span>Zoeken</span>
+        <span>Search</span>
       </button>
       <button className="sell-tab" onClick={() => setPage("sell")}>
         <i>
           <Icon name="plus" size={27} />
         </i>
-        <span>Verkopen</span>
+        <span>Sell</span>
       </button>
       <button className={page === "chat" ? "active" : ""} onClick={() => setPage("chat")}>
         <Icon name="message" />
-        <span>Berichten</span>
+        <span>Messages</span>
       </button>
       <button
         className={page === "account" ? "active" : ""}
@@ -42,7 +42,7 @@ export function MobileNav({
         ) : (
           <Icon name="user" />
         )}
-        <span>{loggedIn ? user.firstName : "Inloggen"}</span>
+        <span>{loggedIn ? user.firstName : "Log in"}</span>
       </button>
     </nav>
   );

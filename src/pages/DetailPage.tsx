@@ -103,13 +103,13 @@ export default function DetailPage({
   const handleSendOffer = () => {
     if (!product) return;
     const bidVal = Number(offerAmount) || 0;
-    const msg = `Ik bied € ${offerAmount}.${offerMessage ? ` ${offerMessage}` : ""}`;
+    const msg = `I offer €${offerAmount}.${offerMessage ? ` ${offerMessage}` : ""}`;
     if (onAddBid && bidVal > 0) {
       onAddBid(product.id, {
         id: `bid-${Date.now()}`,
-        bidderName: "Jij",
+        bidderName: "You",
         amount: bidVal,
-        time: "Zojuist",
+        time: "Just now",
       });
     }
     if (onStartChat) {
@@ -132,12 +132,12 @@ export default function DetailPage({
   if (!product) {
     return (
       <main className="shell detail-page" style={{ padding: "80px 20px", textAlign: "center" }}>
-        <h2>Advertentie niet gevonden</h2>
+        <h2>Listing not found</h2>
         <p style={{ color: "var(--muted)", margin: "12px 0 24px" }}>
-          Deze advertentie is mogelijk verwijderd of niet beschikbaar.
+          This listing may have been removed or is no longer available.
         </p>
         <button className="primary" onClick={() => setPage("search")}>
-          Bekijk andere advertenties
+          View other listings
         </button>
       </main>
     );
@@ -191,16 +191,16 @@ export default function DetailPage({
 
         <aside className="buy-card">
           <div className="detail-labels">
-            {product.top && <span className="top-tag">Topadvertentie</span>}
+            {product.top && <span className="top-tag">Featured listing</span>}
             <span className="condition">{product.state}</span>
           </div>
           <h1>{product.title}</h1>
           <p className="detail-location">
             <Icon name="pin" size={17} />
-            {product.city} · {product.distance || "in de buurt"}
+            {product.city} · {product.distance || "nearby"}
           </p>
           <strong className="detail-price">{product.price}</strong>
-          <span className="nego">Onderhandelbaar</span>
+          <span className="nego">Negotiable</span>
           {product.adStatus === "sold" ? (
             <div style={{ margin: "16px 0", textAlign: "center" }}>
               <span
@@ -215,7 +215,7 @@ export default function DetailPage({
                   width: "100%",
                 }}
               >
-                Dit artikel is verkocht
+                This item has been sold
               </span>
             </div>
           ) : (
@@ -226,30 +226,30 @@ export default function DetailPage({
                 setCheckoutOpen(true);
               }}
             >
-              Koop nu met kopersbescherming
+              Buy now with Buyer Protection
             </button>
           )}
 
           <div className="two-buttons">
             <button className="secondary" onClick={handleStartChat}>
               <Icon name="message" />
-              Bericht sturen
+              Send a message
             </button>
             <button
               className="secondary"
               onClick={() => setOffer(true)}
               disabled={product.adStatus === "sold"}
             >
-              Doe een bod
+              Make an offer
             </button>
           </div>
 
-          {/* Biedingen overzicht */}
+          {/* Bid overview */}
           <div className="bids-card">
             <div className="bids-header">
-              <b>Biedingen ({product.bids?.length || 0})</b>
+              <b>Offers ({product.bids?.length || 0})</b>
               {highestBid > 0 && (
-                <span className="highest-bid-badge">Hoogste bod: € {highestBid}</span>
+                <span className="highest-bid-badge">Highest offer: €{highestBid}</span>
               )}
             </div>
             {product.bids && product.bids.length > 0 ? (
@@ -266,14 +266,14 @@ export default function DetailPage({
               </ul>
             ) : (
               <p style={{ margin: 0, fontSize: "13px", color: "var(--muted)" }}>
-                Nog geen biedingen. Plaats als eerste een bod!
+                No offers yet. Be the first to make one!
               </p>
             )}
           </div>
           <div className="minor-actions">
             <button onClick={toggle}>
               <Icon name="heart" fill={favorite ? "currentColor" : "none"} />
-              {favorite ? "Bewaard" : "Bewaren"}
+              {favorite ? "Saved" : "Save"}
             </button>
             <button
               onClick={() => {
@@ -283,14 +283,14 @@ export default function DetailPage({
               }}
             >
               <Icon name="share" />
-              Delen
+              Share
             </button>
           </div>
           <div className="protection">
             <Icon name="shield" size={27} />
             <div>
-              <b>Kopersbescherming</b>
-              <p>Je betaling is beschermd tot je tevreden bent.</p>
+              <b>Buyer Protection</b>
+              <p>Your payment is protected until you are satisfied.</p>
             </div>
             <Icon name="chevron" size={18} />
           </div>
@@ -299,35 +299,35 @@ export default function DetailPage({
 
       <div className="detail-below">
         <div className="description-card">
-          <h2>Over dit artikel</h2>
+          <h2>About this item</h2>
           <div className="specs">
             <p>
-              <span>Categorie</span>
+              <span>Category</span>
               <b>{product.category}</b>
             </p>
             <p>
-              <span>Staat</span>
+              <span>Condition</span>
               <b>{product.state}</b>
             </p>
             <p>
-              <span>Locatie</span>
+              <span>Location</span>
               <b>{product.city}</b>
             </p>
             <p>
-              <span>Geplaatst</span>
+              <span>Posted</span>
               <b>{product.createdAt || "Recent"}</b>
             </p>
           </div>
-          <h3>Beschrijving</h3>
+          <h3>Description</h3>
           <p>
             {product.description ||
-              `Aangeboden: ${product.title} in de staat "${product.state}". Af te halen in ${product.city} of in overleg te verzenden.`}
+              `For sale: ${product.title} in "${product.state}" condition. Pick up in ${product.city} or arrange shipping.`}
           </p>
           <hr />
           <div className="meta">
-            <span>Geplaatst {product.createdAt || "recent"}</span>
-            <span>184 bekeken</span>
-            <span>23 favorieten</span>
+            <span>Posted {product.createdAt || "recent"}</span>
+            <span>184 views</span>
+            <span>23 favorites</span>
           </div>
         </div>
 
@@ -335,7 +335,7 @@ export default function DetailPage({
           <div className="seller-top">
             <span className="seller-avatar">{product.sellerInitials || "V1"}</span>
             <div>
-              <h3>{product.sellerName || "Verkoper 1"}</h3>
+              <h3>{product.sellerName || "Seller 1"}</h3>
               <p>
                 <span className="stars">★★★★★</span> 4,9 · 15 reviews
               </p>
@@ -343,26 +343,26 @@ export default function DetailPage({
             {product.sellerVerified !== false && (
               <span className="verified">
                 <Icon name="check" size={13} />
-                geverifieerd
+                Verified
               </span>
             )}
           </div>
           <ul>
             <li>
-              <span>Reactiesnelheid</span>
-              <b>Binnen 1 uur</b>
+              <span>Response time</span>
+              <b>Within 1 hour</b>
             </li>
             <li>
-              <span>Lid sinds</span>
+              <span>Member since</span>
               <b>2024</b>
             </li>
             <li>
-              <span>Locatie</span>
+              <span>Location</span>
               <b>{product.city}</b>
             </li>
           </ul>
           <button className="secondary" onClick={handleStartChat}>
-            Stuur een bericht
+            Send a message
           </button>
         </div>
       </div>
@@ -389,11 +389,11 @@ export default function DetailPage({
             <button className="modal-close" onClick={() => setOffer(false)}>
               <Icon name="close" />
             </button>
-            <span className="eyebrow">Doe een bod</span>
-            <h2>Wat wil je bieden voor {product.title}?</h2>
-            <p>Vraagprijs: {product.price}</p>
+            <span className="eyebrow">Make an offer</span>
+              <h2>What would you like to offer for {product.title}?</h2>
+              <p>Asking price: {product.price}</p>
             <label>
-              Jouw bod
+              Your offer
               <div className="offer-input">
                 <span>€</span>
                 <input
@@ -421,21 +421,21 @@ export default function DetailPage({
               })()}
             </div>
             <label>
-              Bericht (optioneel)
+              Message (optional)
               <textarea
                 value={offerMessage}
                 onChange={(e) => setOfferMessage(e.target.value)}
-                placeholder="Bijv. wanneer je het kunt ophalen..."
+                placeholder="e.g. when you can pick it up..."
               />
             </label>
             <button className="primary" onClick={handleSendOffer}>
-              Verstuur bod via chat
+              Send offer via chat
             </button>
           </div>
         </div>
       )}
 
-      {/* CHECKOUT MODAL MET KOPERSBESCHERMING */}
+      {/* CHECKOUT MODAL WITH BUYER PROTECTION */}
       {checkoutOpen && (
         <div className="modal-backdrop" onClick={() => setCheckoutOpen(false)}>
           <div className="modal checkout-modal" onClick={(e) => e.stopPropagation()}>
@@ -446,9 +446,9 @@ export default function DetailPage({
             {!checkoutSuccess ? (
               <>
                 <span className="eyebrow">
-                  <Icon name="shield" size={14} /> Veilig afrekenen met Kopersbescherming
+                  <Icon name="shield" size={14} /> Secure checkout with Buyer Protection
                 </span>
-                <h2>Bestelling afronden</h2>
+                <h2>Complete your order</h2>
 
                 {/* Product preview */}
                 <div className="checkout-product-preview">
@@ -463,14 +463,14 @@ export default function DetailPage({
                     <b style={{ fontSize: "14px", display: "block" }}>{product.title}</b>
                     <span style={{ color: "var(--primary)", fontWeight: 700 }}>{product.price}</span>
                     <small style={{ display: "block", color: "var(--muted)", marginTop: "2px" }}>
-                      Verkoper: {product.sellerName || "Verkoper 1"} ({product.city})
+                      Seller: {product.sellerName || "Seller 1"} ({product.city})
                     </small>
                   </div>
                 </div>
 
-                {/* Bezorgmethode */}
+                {/* Delivery method */}
                 <b style={{ fontSize: "13px", display: "block", marginBottom: "8px" }}>
-                  Kies bezorging of ophalen
+                  Choose delivery or pickup
                 </b>
                 <div className="delivery-options">
                   <label
@@ -484,12 +484,12 @@ export default function DetailPage({
                       style={{ accentColor: "var(--primary)" }}
                     />
                     <div style={{ flex: 1 }}>
-                      <b>Thuisbezorgd via PostNL</b>
+                      <b>Home delivery via PostNL</b>
                       <small style={{ display: "block", color: "var(--muted)" }}>
-                        Verzekerd pakket met Track & Trace
+                        Insured package with Track & Trace
                       </small>
                     </div>
-                    <b>€ 4,95</b>
+                    <b>€4.95</b>
                   </label>
 
                   <label className={`delivery-card ${deliveryMethod === "pickup" ? "active" : ""}`}>
@@ -501,18 +501,18 @@ export default function DetailPage({
                       style={{ accentColor: "var(--primary)" }}
                     />
                     <div style={{ flex: 1 }}>
-                      <b>Ophalen in {product.city}</b>
+                      <b>Pick up in {product.city}</b>
                       <small style={{ display: "block", color: "var(--muted)" }}>
-                        Spreek een ophaalmoment af met de verkoper
+                        Arrange a pickup time with the seller
                       </small>
                     </div>
-                    <b style={{ color: "#16a34a" }}>Gratis</b>
+                    <b style={{ color: "#16a34a" }}>Free</b>
                   </label>
                 </div>
 
-                {/* Betaalmethode */}
+                {/* Payment method */}
                 <b style={{ fontSize: "13px", display: "block", marginBottom: "8px" }}>
-                  Kies betaalmethode
+                  Choose payment method
                 </b>
                 <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "16px" }}>
                   <select
@@ -528,7 +528,7 @@ export default function DetailPage({
                     }}
                   >
                     <option value="iDEAL">iDEAL</option>
-                    <option value="Creditcard">Creditcard (Visa / Mastercard)</option>
+                    <option value="Creditcard">Credit card (Visa / Mastercard)</option>
                     <option value="Bancontact">Bancontact</option>
                     <option value="ApplePay">Apple Pay</option>
                   </select>
@@ -556,22 +556,22 @@ export default function DetailPage({
                   )}
                 </div>
 
-                {/* Kostenoverzicht */}
+                {/* Cost breakdown */}
                 <div className="checkout-breakdown">
                   <div className="checkout-row">
-                    <span>Artikelprijs</span>
+                    <span>Item price</span>
                     <span>€ {itemPrice}</span>
                   </div>
                   <div className="checkout-row">
-                    <span>Kopersbescherming service</span>
-                    <span>€ 0,99</span>
+                    <span>Buyer Protection service</span>
+                    <span>€0.99</span>
                   </div>
                   <div className="checkout-row">
-                    <span>Bezorging</span>
-                    <span>{deliveryMethod === "shipping" ? "€ 4,95" : "Gratis"}</span>
+                    <span>Delivery</span>
+                    <span>{deliveryMethod === "shipping" ? "€4.95" : "Free"}</span>
                   </div>
                   <div className="checkout-row total">
-                    <span>Totaal te voldoen</span>
+                    <span>Total due</span>
                     <span>€ {totalAmount}</span>
                   </div>
                 </div>
@@ -582,7 +582,7 @@ export default function DetailPage({
                   onClick={handleCheckoutConfirm}
                   style={{ width: "100%" }}
                 >
-                  Betaal € {totalAmount} via {paymentMethod}
+                  Pay €{totalAmount} with {paymentMethod}
                 </button>
               </>
             ) : (
@@ -591,11 +591,11 @@ export default function DetailPage({
                   <Icon name="check" size={32} />
                 </span>
                 <span className="eyebrow" style={{ color: "#16a34a" }}>
-                  Bestelling geslaagd!
+                  Order successful!
                 </span>
-                <h2>Bedankt voor je aankoop</h2>
+                <h2>Thank you for your purchase</h2>
                 <p style={{ margin: "10px 0 16px", color: "var(--muted)", fontSize: "14px" }}>
-                  Bestelnummer: <b>{orderReference}</b>
+                  Order number: <b>{orderReference}</b>
                 </p>
                 <div
                   style={{
@@ -609,12 +609,12 @@ export default function DetailPage({
                   }}
                 >
                   <p style={{ margin: "0 0 6px" }}>
-                    <b>Wat gebeurt er nu?</b>
+                    <b>What happens next?</b>
                   </p>
                   <p style={{ margin: 0, color: "var(--muted)" }}>
                     {deliveryMethod === "shipping"
-                      ? `De verkoper (${product.sellerName}) ontvangt een verzendlabel van PostNL en heeft 3 dagen de tijd om je bestelling op te sturen.`
-                      : `Neem contact op met de verkoper (${product.sellerName}) via de chat om een ophaalmoment af te spreken.`}
+                      ? `The seller (${product.sellerName}) will receive a shipping label from PostNL and has 3 days to send your order.`
+                      : `Contact the seller (${product.sellerName}) in chat to arrange a pickup time.`}
                   </p>
                 </div>
                 <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
@@ -626,7 +626,7 @@ export default function DetailPage({
                       setPage("home");
                     }}
                   >
-                    Naar Home
+                    Go to home
                   </button>
                   <button
                     className="primary"
@@ -636,7 +636,7 @@ export default function DetailPage({
                       handleStartChat();
                     }}
                   >
-                    Open chat met verkoper
+                    Chat with seller
                   </button>
                 </div>
               </div>
@@ -651,8 +651,8 @@ export default function DetailPage({
             <Icon name="check" />
           </span>
           <div>
-            <b>Bestelling voorbereid</b>
-            <p>Je kunt nu veilig afrekenen via Kopersbescherming.</p>
+            <b>Order prepared</b>
+            <p>You can now check out safely with Buyer Protection.</p>
           </div>
         </div>
       )}

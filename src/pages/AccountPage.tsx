@@ -35,14 +35,14 @@ export default function AccountPage({
           <div>
             <h1>{userFullName(user)}</h1>
             <p>
-              <Icon name="pin" size={15} /> {location?.city || "Plaats 1"} · Lid sinds 2024
+              <Icon name="pin" size={15} /> {location?.city || "City 1"} · Member since 2024
             </p>
             <span className="verified">
-              <Icon name="check" size={13} /> E-mail en telefoon geverifieerd
+              <Icon name="check" size={13} /> Email and phone verified
             </span>
           </div>
           <button className="secondary" onClick={() => setPage("settings")}>
-            Profiel bewerken
+            Edit profile
           </button>
         </div>
       </section>
@@ -50,16 +50,16 @@ export default function AccountPage({
       <div className="account-layout">
         <nav className="account-nav">
           <button onClick={() => setPage("my-ads")}>
-            <Icon name="package" /> Mijn advertenties ({myAds.length})
+            <Icon name="package" /> My listings ({myAds.length})
           </button>
           <button
             className={tab === "favorites" ? "active" : ""}
             onClick={() => setTab("favorites")}
           >
-            <Icon name="heart" /> Mijn favorieten ({favorites.size})
+            <Icon name="heart" /> My favorites ({favorites.size})
           </button>
           <button onClick={() => setPage("settings")}>
-            <Icon name="user" /> Accountinstellingen
+            <Icon name="user" /> Account settings
           </button>
         </nav>
 
@@ -68,11 +68,11 @@ export default function AccountPage({
             <>
               <div className="account-heading">
                 <div>
-                  <span className="eyebrow">Bewaard</span>
-                  <h2>Mijn favorieten ({favorites.size})</h2>
+                  <span className="eyebrow">Saved</span>
+                  <h2>My favorites ({favorites.size})</h2>
                 </div>
                 <label className="alert-toggle">
-                  <span>Prijsalerts</span>
+                  <span>Price alerts</span>
                   <input
                     type="checkbox"
                     checked={priceAlerts}
@@ -95,16 +95,16 @@ export default function AccountPage({
               ) : (
                 <div style={{ textAlign: "center", padding: "40px 20px" }}>
                   <Icon name="heart" size={32} />
-                  <h3 style={{ marginTop: "12px" }}>Nog geen favorieten bewaard</h3>
+                  <h3 style={{ marginTop: "12px" }}>No favorites saved yet</h3>
                   <p style={{ color: "var(--muted)" }}>
-                    Klik op het hartje bij een advertentie om deze te bewaren voor later.
+                    Click the heart on a listing to save it for later.
                   </p>
                   <button
                     className="primary"
                     style={{ marginTop: "12px" }}
                     onClick={() => setPage("search")}
                   >
-                    Ontdek advertenties
+                    Explore listings
                   </button>
                 </div>
               )}

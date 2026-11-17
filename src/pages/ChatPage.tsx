@@ -53,13 +53,13 @@ export default function ChatPage({
     <main className="shell inbox">
       <aside className="conversation-list">
         <div className="inbox-title">
-          <h1>Berichten</h1>
+          <h1>Messages</h1>
         </div>
 
         <div style={{ padding: "0 16px 12px" }}>
           <input
             type="text"
-            placeholder="Zoek in gesprekken..."
+            placeholder="Search conversations..."
             value={searchFilter}
             onChange={(e) => setSearchFilter(e.target.value)}
             style={{
@@ -73,7 +73,7 @@ export default function ChatPage({
         </div>
 
         <div className="chat-tabs">
-          <button className="active">Alles ({conversations.length})</button>
+          <button className="active">All ({conversations.length})</button>
         </div>
 
         {filteredConversations.map((c) => (
@@ -121,7 +121,7 @@ export default function ChatPage({
               <b>{currentConv.name}</b>
               <small>
                 <i />
-                Online op Bidzaar
+                Online on Bidzaar
               </small>
             </div>
           </div>
@@ -156,11 +156,11 @@ export default function ChatPage({
 
           <div className="safety">
             <Icon name="shield" size={17} />
-            Betaal altijd veilig via Bidzaar Kopersbescherming. Deel nooit bankgegevens in de chat.
+            Always pay safely with Bidzaar Buyer Protection. Never share bank details in chat.
           </div>
 
           <div className="messages">
-            <span className="day">Gesprek</span>
+            <span className="day">Conversation</span>
             {currentConv.messages?.map((m) => (
               <div className={`bubble ${m.sender === "me" ? "mine" : ""}`} key={m.id}>
                 <p>{m.text}</p>
@@ -172,7 +172,7 @@ export default function ChatPage({
           </div>
 
           <div className="quick-replies">
-            {currentConv.messages?.some((m) => m.text.includes("Ik bied €")) && (
+            {currentConv.messages?.some((m) => m.text.includes("I offer €")) && (
               <>
                 <button
                   type="button"
@@ -183,28 +183,28 @@ export default function ChatPage({
                   }}
                   onClick={() =>
                     handleSend(
-                      "Akkoord! Ik accepteer je bod. Je kunt nu veilig afrekenen via Kopersbescherming.",
+                      "Agreed! I accept your offer. You can now check out safely with Buyer Protection.",
                     )
                   }
                 >
-                  ✓ Bod accepteren
+                  ✓ Accept offer
                 </button>
                 <button
                   type="button"
-                  onClick={() => setText("Bedankt voor je bod. Mijn uiterste prijs is € ")}
+                  onClick={() => setText("Thanks for your offer. My lowest price is € ")}
                 >
-                  Tegenbod sturen...
+                  Send a counteroffer...
                 </button>
               </>
             )}
-            <button type="button" onClick={() => handleSend("Is dit nog beschikbaar?")}>
-              Is dit nog beschikbaar?
+            <button type="button" onClick={() => handleSend("Is this still available?")}>
+              Is this still available?
             </button>
-            <button type="button" onClick={() => handleSend("Wanneer kan ik dit ophalen?")}>
-              Wanneer kan ik ophalen?
+            <button type="button" onClick={() => handleSend("When can I pick this up?")}>
+              When can I pick this up?
             </button>
-            <button type="button" onClick={() => handleSend("Wat is je uiterste prijs?")}>
-              Wat is je uiterste prijs?
+            <button type="button" onClick={() => handleSend("What is your lowest price?")}>
+              What is your lowest price?
             </button>
           </div>
 
@@ -213,7 +213,7 @@ export default function ChatPage({
               value={text}
               onChange={(e) => setText(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSend()}
-              placeholder="Typ een bericht…"
+              placeholder="Type a message…"
             />
             <button className="send-btn" onClick={() => handleSend()} type="button">
               <Icon name="send" />
@@ -222,7 +222,7 @@ export default function ChatPage({
         </section>
       ) : (
         <section className="chat-window" style={{ display: "grid", placeItems: "center" }}>
-          <p>Selecteer een gesprek om berichten te bekijken.</p>
+          <p>Select a conversation to view messages.</p>
         </section>
       )}
     </main>

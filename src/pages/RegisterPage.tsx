@@ -22,9 +22,9 @@ export default function RegisterPage({
             ? `${form.firstName.charAt(0)}${form.lastName.charAt(0)}`.toUpperCase()
             : "b"}
         </span>
-        <span className="eyebrow">Nieuw bij Bidzaar</span>
-        <h1>Maak je account</h1>
-        <p>Vul je eigen gegevens in. Deze naam en initialen verschijnen bij je profiel.</p>
+        <span className="eyebrow">New to Bidzaar</span>
+        <h1>Create your account</h1>
+        <p>Enter your details. Your name and initials will appear on your profile.</p>
         <form
           onSubmit={(event) => {
             event.preventDefault();
@@ -37,51 +37,51 @@ export default function RegisterPage({
         >
           <div className="form-grid">
             <label>
-              Voornaam
+              First name
               <input
                 required
                 value={form.firstName}
                 onChange={(event) => setForm({ ...form, firstName: event.target.value })}
-                placeholder="Voornaam"
+                placeholder="First name"
               />
             </label>
             <label>
-              Achternaam
+              Last name
               <input
                 required
                 value={form.lastName}
                 onChange={(event) => setForm({ ...form, lastName: event.target.value })}
-                placeholder="Achternaam"
+                placeholder="Last name"
               />
             </label>
           </div>
           <label>
-            E-mailadres
+            Email address
             <input
               type="email"
               required
               value={form.email}
               onChange={(event) => setForm({ ...form, email: event.target.value })}
-              placeholder="naam@voorbeeld.nl"
+              placeholder="name@example.com"
             />
           </label>
           <label>
-            Wachtwoord
+            Password
             <input
               type="password"
               required
               minLength={8}
               value={form.password}
               onChange={(event) => setForm({ ...form, password: event.target.value })}
-              placeholder="Minimaal 8 tekens"
+              placeholder="At least 8 characters"
             />
           </label>
           <button className="primary" type="submit">
-            Account aanmaken
+            Create account
           </button>
         </form>
         <p className="register-link">
-          Heb je al een account? <button onClick={() => setPage("login")}>Inloggen</button>
+          Already have an account? <button onClick={() => setPage("login")}>Log in</button>
         </p>
       </div>
     </main>

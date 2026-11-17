@@ -23,30 +23,30 @@ export default function SellPage({
 
   // Form states
   const [title, setTitle] = useState("Product 1");
-  const [category, setCategory] = useState("Categorie 1");
+  const [category, setCategory] = useState("Category 1");
   const [description, setDescription] = useState(
-    "Beschrijving van product via API.",
+    "Product description via API.",
   );
-  const [condition, setCondition] = useState("Zo goed als nieuw");
+  const [condition, setCondition] = useState("Like new");
   const [price, setPrice] = useState("100");
   const [allowBidding, setAllowBidding] = useState(true);
   const [allowShipping, setAllowShipping] = useState(false);
   const [photoUrl, setPhotoUrl] = useState(IMG.bike);
 
-  const city = location?.city || "Plaats 1";
+  const city = location?.city || "City 1";
 
   const titles = [
-    "Foto’s toevoegen",
-    "Vertel over je artikel",
-    "Kies je prijs",
-    "Bezorgen of ophalen",
-    "Controleer je advertentie",
+    "Add photos",
+    "Tell us about your item",
+    "Set your price",
+    "Delivery or pickup",
+    "Review your listing",
   ];
 
   const handleFinish = async () => {
     setSubmitting(true);
     const newProductData: Omit<Product, "id"> = {
-      title: title.trim() || "Tweedehands artikel",
+      title: title.trim() || "Second-hand item",
       price: `€ ${price.trim()}`,
       priceAmount: Number(price.replace(/[^\d]/g, "")) || 0,
       city: city,
@@ -58,10 +58,10 @@ export default function SellPage({
       description: description.trim(),
       lat: location?.lat || 52.0907,
       lon: location?.lon || 5.1214,
-      sellerName: user ? `${user.firstName} ${user.lastName}` : "Jij",
-      sellerInitials: user ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase() : "IK",
+      sellerName: user ? `${user.firstName} ${user.lastName}` : "You",
+      sellerInitials: user ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase() : "ME",
       sellerVerified: true,
-      createdAt: "Zojuist",
+      createdAt: "Just now",
       isUserAd: true,
     };
 
@@ -70,7 +70,7 @@ export default function SellPage({
         const prod = await onCreateProduct(newProductData);
         setCreatedProduct(prod);
       } catch (err) {
-        console.error("Fout bij opslaan advertentie:", err);
+        console.error("Error saving listing:", err);
       }
     }
     setSubmitting(false);
@@ -104,9 +104,9 @@ export default function SellPage({
         <span className="success-icon">
           <Icon name="check" size={48} />
         </span>
-        <span className="eyebrow">Gelukt</span>
-        <h1>Je advertentie staat online!</h1>
-        <p>Je {displayProduct.title} is nu zichtbaar voor duizenden kopers.</p>
+        <span className="eyebrow">Done</span>
+        <h1>Your listing is live!</h1>
+        <p>Your {displayProduct.title} is now visible to thousands of buyers.</p>
 
         <div className="success-card">
           <img src={displayProduct.image} alt={displayProduct.title} />
@@ -125,11 +125,11 @@ export default function SellPage({
             setPage("detail");
           }}
         >
-          Bekijk je advertentie
+          View your listing
         </button>
 
         <button className="secondary" onClick={() => setPage("my-ads")}>
-          Naar mijn advertenties
+          Go to my listings
         </button>
 
         <button
@@ -139,7 +139,7 @@ export default function SellPage({
             setStep(1);
           }}
         >
-          Nog iets verkopen
+          Sell another item
         </button>
       </main>
     );
@@ -148,9 +148,9 @@ export default function SellPage({
   return (
     <main className="sell-flow">
       <div className="sell-top shell">
-        <button onClick={() => setPage("home")}>‹ Stoppen</button>
+        <button onClick={() => setPage("home")}>‹ Cancel</button>
         <Logo onClick={() => setPage("home")} />
-        <button onClick={() => setPage("my-ads")}>Concepten</button>
+        <button onClick={() => setPage("my-ads")}>Drafts</button>
       </div>
 
       <div className="progress">
@@ -158,18 +158,18 @@ export default function SellPage({
       </div>
 
       <div className="sell-shell">
-        <div className="step-label">Stap {step} van 5</div>
+        <div className="step-label">Step {step} of 5</div>
         <h1>{titles[step - 1]}</h1>
 
         {step === 1 && (
           <>
-            <p className="lead">Goede foto's verkopen sneller. Voeg maximaal 20 foto's toe.</p>
+            <p className="lead">Good photos sell faster. Add up to 20 photos.</p>
             <div className="upload-zone" onClick={handlePhotoUpload} style={{ cursor: "pointer" }}>
               <span>
                 <Icon name="camera" size={32} />
               </span>
-              <h3>Klik of sleep foto’s hierheen</h3>
-              <p>JPG, PNG of HEIC · maximaal 10 MB</p>
+              <h3>Click or drag photos here</h3>
+              <p>JPG, PNG, or HEIC · max. 10 MB</p>
               <button
                 className="secondary"
                 type="button"
@@ -178,22 +178,22 @@ export default function SellPage({
                   handlePhotoUpload();
                 }}
               >
-                Kies foto
+                Choose photo
               </button>
             </div>
             <div className="photo-preview">
               <div>
-                <img src={photoUrl} alt="Hoofdfoto" />
-                <span>Hoofdfoto</span>
+                <img src={photoUrl} alt="Main photo" />
+                <span>Main photo</span>
               </div>
               <button type="button" onClick={handlePhotoUpload}>
                 <Icon name="plus" />
-                Andere foto
+                Another photo
               </button>
             </div>
             <div className="tip">
-              <b>Fototip</b>
-              <p>Gebruik daglicht en fotografeer je artikel van meerdere kanten.</p>
+              <b>Photo tip</b>
+              <p>Use daylight and photograph your item from several angles.</p>
             </div>
           </>
         )}
@@ -201,17 +201,17 @@ export default function SellPage({
         {step === 2 && (
           <div className="form-stack">
             <label>
-              Titel
+              Title
               <input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="Bijv. Product 1"
+                placeholder="e.g. Product 1"
               />
               <small>{title.length} / 60 tekens</small>
             </label>
 
             <label>
-              Categorie
+              Category
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
@@ -226,27 +226,27 @@ export default function SellPage({
             </label>
 
             <label>
-              Beschrijving
+              Description
               <textarea
                 rows={5}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Beschrijf eventuele beschadigingen, specificaties of bijzonderheden..."
+                placeholder="Describe any damage, specifications, or special features..."
               />
             </label>
 
             <div className="form-grid">
               <label>
-                Staat
+                Condition
                 <select
                   value={condition}
                   onChange={(e) => setCondition(e.target.value)}
                   style={{ width: "100%", padding: "10px", borderRadius: "8px", border: "1px solid var(--line)" }}
                 >
-                  <option value="Zo goed als nieuw">Zo goed als nieuw</option>
-                  <option value="Nieuw">Nieuw</option>
-                  <option value="Goed">Goed</option>
-                  <option value="Gebruikt">Gebruikt</option>
+                  <option value="Like new">Like new</option>
+                  <option value="New">New</option>
+                  <option value="Good">Good</option>
+                  <option value="Used">Used</option>
                 </select>
               </label>
             </div>
@@ -256,7 +256,7 @@ export default function SellPage({
         {step === 3 && (
           <div className="form-stack">
             <label>
-              Vraagprijs
+              Asking price
               <div className="big-price-input">
                 <span>€</span>
                 <input
@@ -268,9 +268,9 @@ export default function SellPage({
               </div>
             </label>
             <div className="advice">
-              <span>Prijsadvies</span>
+              <span>Suggested price</span>
               <b>€ {Math.max(10, Number(price) - 30)} – € {Number(price) + 40}</b>
-              <p>Gebaseerd op vergelijkbare verkopen in {category}.</p>
+              <p>Based on similar sales in {category}.</p>
             </div>
             <label className="check card-check">
               <input
@@ -279,8 +279,8 @@ export default function SellPage({
                 onChange={(e) => setAllowBidding(e.target.checked)}
               />
               <span>
-                <b>Bieden toestaan</b>
-                <small>Kopers kunnen je een bod sturen</small>
+                <b>Allow offers</b>
+                <small>Buyers can send you an offer</small>
               </span>
             </label>
           </div>
@@ -291,8 +291,8 @@ export default function SellPage({
             <label className="check card-check">
               <input type="checkbox" checked disabled />
               <span>
-                <b>Ophalen in {city}</b>
-                <small>Je exacte adres blijft privé tot verkoop</small>
+                <b>Pickup in {city}</b>
+                <small>Your exact address stays private until the sale</small>
               </span>
             </label>
             <label className="check card-check">
@@ -302,13 +302,13 @@ export default function SellPage({
                 onChange={(e) => setAllowShipping(e.target.checked)}
               />
               <span>
-                <b>Verzenden mogelijk</b>
-                <small>Vanaf € 6,95 met Kopersbescherming via PostNL / DHL</small>
+                <b>Shipping available</b>
+                <small>From €6.95 with Buyer Protection via PostNL / DHL</small>
               </span>
             </label>
             <div className="mini-map">
               <Icon name="pin" size={28} />
-              <span>Locatie: {city}</span>
+              <span>Location: {city}</span>
             </div>
           </div>
         )}
@@ -321,12 +321,12 @@ export default function SellPage({
               <h2>{title}</h2>
               <strong>€ {price}</strong>
               <p>
-                Ophalen in {city} {allowShipping ? "· Verzenden mogelijk" : ""} ·{" "}
-                {allowBidding ? "Bieden toegestaan" : "Vaste prijs"}
+                Pickup in {city} {allowShipping ? "· Shipping available" : ""} ·{" "}
+                {allowBidding ? "Offers accepted" : "Fixed price"}
               </p>
             </div>
             <button className="secondary" type="button" onClick={() => setStep(2)}>
-              Bewerk
+              Edit
             </button>
           </div>
         )}
@@ -338,7 +338,7 @@ export default function SellPage({
             onClick={() => setStep(step - 1)}
             type="button"
           >
-            Vorige
+            Previous
           </button>
           <button
             className="primary"
@@ -352,7 +352,7 @@ export default function SellPage({
             disabled={submitting}
             type="button"
           >
-            {submitting ? "Plaatsen..." : step === 5 ? "Plaats advertentie" : "Volgende stap"}{" "}
+            {submitting ? "Posting..." : step === 5 ? "Post listing" : "Next step"}{" "}
             <Icon name="chevron" />
           </button>
         </div>

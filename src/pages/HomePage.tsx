@@ -30,12 +30,12 @@ export default function HomePage({
   const resultsRef = useRef<HTMLElement>(null);
 
   const visibleProducts = useMemo(() => {
-    const normalizedQuery = query.trim().toLocaleLowerCase("nl");
+    const normalizedQuery = query.trim().toLocaleLowerCase("en");
     return products.filter((product) => {
       const matchesQuery =
         !normalizedQuery ||
         `${product.title} ${product.category} ${product.city}`
-          .toLocaleLowerCase("nl")
+          .toLocaleLowerCase("en")
           .includes(normalizedQuery);
       const matchesCategory = !activeCategory || product.category === activeCategory;
       return matchesQuery && matchesCategory;

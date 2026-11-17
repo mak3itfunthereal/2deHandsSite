@@ -48,19 +48,19 @@ function FilterPanel({
       </div>
 
       <div className="filter-location">
-        <b>Locatie en afstand</b>
+        <b>Location and distance</b>
         <LocationControls location={location} onChange={onLocationChange} />
       </div>
 
       <div className="filter-group">
-        <b>Categorie</b>
+        <b>Category</b>
         <select
           className="select-like"
           value={selectedCategory}
           onChange={(e) => onCategoryChange(e.target.value)}
           style={{ width: "100%", padding: "10px", borderRadius: "8px", border: "1px solid var(--line)" }}
         >
-          <option value="">Alle categorieën</option>
+          <option value="">All categories</option>
           {categories.map((c) => (
             <option key={c.name} value={c.name}>
               {c.name}
@@ -70,7 +70,7 @@ function FilterPanel({
       </div>
 
       <div className="filter-group">
-        <b>Maximale prijs (€ {maxPrice})</b>
+        <b>Maximum price (€{maxPrice})</b>
         <div className="range-label">
           <span>€ 0</span>
           <span>€ 1.000+</span>
@@ -86,7 +86,7 @@ function FilterPanel({
         <div className="price-inputs">
           <input
             type="number"
-            placeholder="Max €"
+            placeholder="Max. €"
             value={maxPrice}
             onChange={(e) => onMaxPriceChange(Number(e.target.value) || 1000)}
           />
@@ -94,14 +94,14 @@ function FilterPanel({
       </div>
 
       <div className="filter-group">
-        <b>Staat</b>
-        {["Alle", "Nieuw", "Zo goed als nieuw", "Goed", "Gebruikt"].map((state) => (
+        <b>Condition</b>
+        {["All", "New", "Like new", "Good", "Used"].map((state) => (
           <label className="check" key={state}>
             <input
               type="radio"
               name="condition"
-              checked={selectedCondition === (state === "Alle" ? "" : state)}
-              onChange={() => onConditionChange(state === "Alle" ? "" : state)}
+              checked={selectedCondition === (state === "All" ? "" : state)}
+              onChange={() => onConditionChange(state === "All" ? "" : state)}
             />
             <span>{state}</span>
           </label>
@@ -109,7 +109,7 @@ function FilterPanel({
       </div>
 
       <div className="filter-group">
-        <b>Bezorgopties & service</b>
+        <b>Delivery options & services</b>
         <label className="check" style={{ marginBottom: "8px" }}>
           <input
             type="checkbox"
@@ -117,7 +117,7 @@ function FilterPanel({
             onChange={(e) => onShippingOnlyChange(e.target.checked)}
             style={{ accentColor: "var(--primary)" }}
           />
-          <span>Verzenden mogelijk</span>
+          <span>Shipping available</span>
         </label>
         <label className="check">
           <input
@@ -126,7 +126,7 @@ function FilterPanel({
             onChange={(e) => onProtectionOnlyChange(e.target.checked)}
             style={{ accentColor: "var(--primary)" }}
           />
-          <span>Met Kopersbescherming</span>
+          <span>With Buyer Protection</span>
         </label>
       </div>
 
@@ -136,11 +136,11 @@ function FilterPanel({
         type="button"
         style={{ width: "100%", marginBottom: "10px" }}
       >
-        Wis filters
+        Clear filters
       </button>
 
       <button className="primary apply-filter" onClick={onClose} type="button">
-        Toon {resultCount} resultaten
+        Show {resultCount} results
       </button>
     </aside>
   );
@@ -168,7 +168,7 @@ export default function SearchPage({
   onSelectProduct?: (productId: number) => void;
 }) {
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const [sort, setSort] = useState("Meest relevant");
+  const [sort, setSort] = useState("Most relevant");
   const [saved, setSaved] = useState(false);
   const [query, setQuery] = useState(initialQuery);
   const [category, setCategory] = useState(initialCategory || "");
@@ -258,11 +258,11 @@ export default function SearchPage({
         return true;
       })
       .sort((a, b) => {
-        if (sort === "Dichtstbij") return a.calculatedDistance - b.calculatedDistance;
+        if (sort === "Nearest") return a.calculatedDistance - b.calculatedDistance;
         const priceA = a.priceAmount ?? (Number(a.price.replace(/[^\d]/g, "")) || 0);
         const priceB = b.priceAmount ?? (Number(b.price.replace(/[^\d]/g, "")) || 0);
-        if (sort === "Prijs laag-hoog") return priceA - priceB;
-        if (sort === "Prijs hoog-laag") return priceB - priceA;
+        if (sort === "Price: low to high") return priceA - priceB;
+        if (sort === "Price: high to low") return priceB - priceA;
         return 0;
       });
   }, [products, location, query, category, condition, maxPrice, sort, shippingOnly, protectionOnly]);
@@ -299,19 +299,19 @@ export default function SearchPage({
             )}
           </>
         ) : (
-          <span>{query ? `Zoeken naar “${query}”` : "Alle advertenties"}</span>
+          <span>{query ? `Searching for “${query}”` : "All listings"}</span>
         )}
       </div>
 
       <div className="results-heading">
         <div>
-          <span className="eyebrow">{filteredProducts.length} resultaten</span>
+          <span className="eyebrow">{filteredProducts.length} results</span>
           <h1>
             {query
-              ? `Resultaten voor “${query}”`
+              ? `Results for “${query}”`
               : category
                 ? category
-                : `Advertenties rond ${location.city}`}
+                : `Listings near ${location.city}`}
           </h1>
         </div>
         <button
@@ -320,7 +320,7 @@ export default function SearchPage({
           type="button"
         >
           <Icon name="bell" />
-          {saved ? "Zoekopdracht opgeslagen" : "Bewaar zoekopdracht"}
+          {saved ? "Search saved" : "Save search"}
         </button>
       </div>
 
@@ -345,22 +345,22 @@ export default function SearchPage({
         )}
         {maxPrice < 1000 && (
           <span>
-            Tot € {maxPrice} <button onClick={() => setMaxPrice(1000)}>×</button>
+            Up to €{maxPrice} <button onClick={() => setMaxPrice(1000)}>×</button>
           </span>
         )}
         {shippingOnly && (
           <span>
-            Verzenden mogelijk <button onClick={() => setShippingOnly(false)}>×</button>
+            Shipping available <button onClick={() => setShippingOnly(false)}>×</button>
           </span>
         )}
         {protectionOnly && (
           <span>
-            Kopersbescherming <button onClick={() => setProtectionOnly(false)}>×</button>
+            Buyer Protection <button onClick={() => setProtectionOnly(false)}>×</button>
           </span>
         )}
         {(category || query || condition || maxPrice < 1000 || shippingOnly || protectionOnly) && (
           <button className="clear" onClick={handleResetFilters}>
-            Wis alle filters
+            Clear all filters
           </button>
         )}
       </div>
@@ -376,10 +376,10 @@ export default function SearchPage({
             (protectionOnly ? 1 : 0)}
         </button>
         <select value={sort} onChange={(e) => setSort(e.target.value)}>
-          <option>Meest relevant</option>
-          <option>Dichtstbij</option>
-          <option>Prijs laag-hoog</option>
-          <option>Prijs hoog-laag</option>
+          <option>Most relevant</option>
+          <option>Nearest</option>
+          <option>Price: low to high</option>
+          <option>Price: high to low</option>
         </select>
       </div>
 
@@ -428,15 +428,15 @@ export default function SearchPage({
 
         <section className="results">
           <div className="results-toolbar">
-            <span>{filteredProducts.length} advertenties gevonden</span>
+            <span>{filteredProducts.length} listings found</span>
             <div>
               <label>
-                Sorteren:{" "}
+                Sort by:{" "}
                 <select value={sort} onChange={(e) => setSort(e.target.value)}>
-                  <option>Meest relevant</option>
-                  <option>Dichtstbij</option>
-                  <option>Prijs laag-hoog</option>
-                  <option>Prijs hoog-laag</option>
+                  <option>Most relevant</option>
+                  <option>Nearest</option>
+                  <option>Price: low to high</option>
+                  <option>Price: high to low</option>
                 </select>
               </label>
             </div>
@@ -469,7 +469,7 @@ export default function SearchPage({
                     type="button"
                     style={{ padding: "12px 28px", borderRadius: "10px" }}
                   >
-                    Toon meer advertenties ({Math.min(pageSize, filteredProducts.length)} van{" "}
+                    Show more listings ({Math.min(pageSize, filteredProducts.length)} of{" "}
                     {filteredProducts.length})
                   </button>
                 </div>
@@ -478,19 +478,19 @@ export default function SearchPage({
           ) : (
             <div className="no-local-results" style={{ textAlign: "center", padding: "60px 20px" }}>
               <Icon name="search" size={48} />
-              <h2>Geen advertenties gevonden</h2>
+              <h2>No listings found</h2>
               <p>
-                Geen resultaten binnen {location.radius} km van {location.city}.
+                No results within {location.radius} km of {location.city}.
               </p>
               <button
                 className="secondary"
                 onClick={() => onLocationChange({ ...location, radius: 100 })}
                 style={{ marginTop: "12px", marginRight: "10px" }}
               >
-                Vergroot zoekgebied naar 100 km
+                Expand search area to 100 km
               </button>
               <button className="primary" onClick={handleResetFilters} style={{ marginTop: "12px" }}>
-                Wis alle filters
+                Clear all filters
               </button>
             </div>
           )}

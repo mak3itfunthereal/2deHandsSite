@@ -26,12 +26,12 @@ export function ProductCard({
             e.currentTarget.src = FALLBACK_IMAGE;
           }}
         />
-        {item.top && <span className="top-tag">Topadvertentie</span>}
+        {item.top && <span className="top-tag">Featured listing</span>}
       </button>
       <button
         className={`heart-btn ${favorite ? "liked" : ""}`}
         onClick={toggle}
-        aria-label="Bewaar advertentie"
+        aria-label="Save listing"
         type="button"
       >
         <Icon name="heart" fill={favorite ? "currentColor" : "none"} />
@@ -44,10 +44,10 @@ export function ProductCard({
           <span>
             {item.city} ·{" "}
             {"calculatedDistance" in item && item.calculatedDistance != null
-              ? `${Number(item.calculatedDistance).toLocaleString("nl-NL", { maximumFractionDigits: 1 })} km`
+              ? `${Number(item.calculatedDistance).toLocaleString("en-GB", { maximumFractionDigits: 1 })} km`
               : item.distance}
           </span>
-          <span>Vandaag</span>
+          <span>Today</span>
         </div>
       </button>
     </article>

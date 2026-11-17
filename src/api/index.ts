@@ -113,7 +113,7 @@ export const api = {
     const created: Product = {
       ...newProductData,
       id: newId,
-      createdAt: "Zojuist",
+      createdAt: "Just now",
       isUserAd: true,
       images: newProductData.images || [newProductData.image],
     };
@@ -170,11 +170,11 @@ export const api = {
       id: `msg-${Date.now()}`,
       sender,
       text,
-      time: "Zojuist",
+      time: "Just now",
     };
     target.messages.push(newMsg);
     target.msg = text;
-    target.time = "Zojuist";
+    target.time = "Just now";
 
     saveLocalConversations([...conversations]);
     return { ...target };
@@ -191,16 +191,16 @@ export const api = {
         productImage: product.image,
         productPrice: product.price,
         initials: product.sellerInitials || product.sellerName?.slice(0, 2).toUpperCase() || "VK",
-        name: product.sellerName || "Verkoper",
-        msg: `Geïnteresseerd in ${product.title}`,
-        time: "Zojuist",
+        name: product.sellerName || "Seller",
+        msg: `Interested in ${product.title}`,
+        time: "Just now",
         unread: 0,
         messages: [
           {
             id: `msg-welcome-${Date.now()}`,
             sender: "them",
-            text: `Hallo! Je bekijkt mijn advertentie voor "${product.title}". Heb je vragen?`,
-            time: "Zojuist",
+            text: `Hello! You're viewing my listing for "${product.title}". Do you have any questions?`,
+            time: "Just now",
           },
         ],
       };

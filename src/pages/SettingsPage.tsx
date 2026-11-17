@@ -25,13 +25,13 @@ export default function SettingsPage({
   onDeleteAccount?: () => void;
 }) {
   const [section, setSection] = useState<
-    "Profiel" | "Meldingen" | "Privacy & beveiliging" | "Betalen" | "Weergave & regio"
-  >("Profiel");
+    "Profile" | "Notifications" | "Privacy & security" | "Payments" | "Display & region"
+  >("Profile");
 
   const [saved, setSaved] = useState(false);
   const [profileDraft, setProfileDraft] = useState<UserProfile>(user);
-  const [cityDraft, setCityDraft] = useState(location?.city || "Plaats 1");
-  const [bioDraft, setBioDraft] = useState("Actief lid op het platform.");
+  const [cityDraft, setCityDraft] = useState(location?.city || "City 1");
+  const [bioDraft, setBioDraft] = useState("Active member of the platform.");
 
   // Notifications
   const [push, setPush] = useState(true);
@@ -57,7 +57,7 @@ export default function SettingsPage({
   const [autoPayout, setAutoPayout] = useState(true);
 
   // Display & Region
-  const [language, setLanguage] = useState("Nederlands");
+  const [language, setLanguage] = useState("English");
   const [currency, setCurrency] = useState("EUR (€)");
   const [distanceUnit, setDistanceUnit] = useState("Kilometers (km)");
 
@@ -77,12 +77,12 @@ export default function SettingsPage({
     }
   }, [location?.city]);
 
-  const sections: Array<"Profiel" | "Meldingen" | "Privacy & beveiliging" | "Betalen" | "Weergave & regio"> = [
-    "Profiel",
-    "Meldingen",
-    "Privacy & beveiliging",
-    "Betalen",
-    "Weergave & regio",
+  const sections: Array<"Profile" | "Notifications" | "Privacy & security" | "Payments" | "Display & region"> = [
+    "Profile",
+    "Notifications",
+    "Privacy & security",
+    "Payments",
+    "Display & region",
   ];
 
   const handleAvatarUpload = () => {
@@ -106,18 +106,18 @@ export default function SettingsPage({
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentPassword) {
-      setPasswordStatus("Vul eerst je huidige wachtwoord in.");
+      setPasswordStatus("Enter your current password first.");
       return;
     }
     if (newPassword.length < 8) {
-      setPasswordStatus("Nieuw wachtwoord moet minimaal 8 tekens bevatten.");
+      setPasswordStatus("Your new password must be at least 8 characters.");
       return;
     }
     if (newPassword !== confirmPassword) {
-      setPasswordStatus("Nieuwe wachtwoorden komen niet overeen.");
+      setPasswordStatus("The new passwords do not match.");
       return;
     }
-    setPasswordStatus("Wachtwoord succesvol gewijzigd!");
+    setPasswordStatus("Password changed successfully!");
     setCurrentPassword("");
     setNewPassword("");
     setConfirmPassword("");
@@ -141,14 +141,14 @@ export default function SettingsPage({
   return (
     <main className="shell standalone-page">
       <div className="page-back">
-        <button onClick={() => setPage("account")}>← Terug naar mijn profiel</button>
+        <button onClick={() => setPage("account")}>← Back to my profile</button>
       </div>
 
       <div className="standalone-heading compact">
         <div>
-          <span className="eyebrow">Mijn account</span>
-          <h1>Instellingen</h1>
-          <p>Beheer je gegevens, beveiliging, meldingen en betaalmethoden.</p>
+          <span className="eyebrow">My account</span>
+          <h1>Settings</h1>
+          <p>Manage your details, security, notifications, and payment methods.</p>
         </div>
       </div>
 
@@ -173,7 +173,7 @@ export default function SettingsPage({
                 type="button"
                 style={{ color: "var(--muted)", minHeight: "40px" }}
               >
-                <span>Uitloggen</span>
+                <span>Log out</span>
               </button>
             </>
           )}
@@ -183,21 +183,21 @@ export default function SettingsPage({
           <div className="settings-panel-head">
             <h2>{section}</h2>
             <p>
-              {section === "Profiel" &&
-                "Beheer je openbare profiel, contactgegevens en profielfoto."}
-              {section === "Meldingen" &&
-                "Bepaal hoe en wanneer je updates ontvangt over je advertenties en chats."}
-              {section === "Privacy & beveiliging" &&
-                "Bescherm je account met wachtwoord, tweestapsverificatie en privacy-opties."}
-              {section === "Betalen" &&
-                "Beheer je bankrekening voor uitbetalingen en je standaard betaalmethode."}
-              {section === "Weergave & regio" &&
-                "Pas de weergave, thema, taal en maateenheden van het platform aan."}
+              {section === "Profile" &&
+                "Manage your public profile, contact details, and profile photo."}
+              {section === "Notifications" &&
+                "Choose how and when you receive updates about your listings and chats."}
+              {section === "Privacy & security" &&
+                "Protect your account with a password, two-factor authentication, and privacy options."}
+              {section === "Payments" &&
+                "Manage your bank account for payouts and your default payment method."}
+              {section === "Display & region" &&
+                "Adjust the platform's appearance, theme, language, and units of measurement."}
             </p>
           </div>
 
-          {/* TAB: PROFIEL */}
-          {section === "Profiel" && (
+          {/* TAB: PROFILE */}
+          {section === "Profile" && (
             <div className="settings-form">
               <div className="avatar-setting">
                 {profileDraft.avatar ? (
@@ -211,7 +211,7 @@ export default function SettingsPage({
                 )}
                 <div className="avatar-actions">
                   <button className="secondary" type="button" onClick={handleAvatarUpload}>
-                    <Icon name="camera" size={16} /> Foto uploaden
+                    <Icon name="camera" size={16} /> Upload photo
                   </button>
                   {profileDraft.avatar && (
                     <button
@@ -220,7 +220,7 @@ export default function SettingsPage({
                       onClick={handleRemoveAvatar}
                       style={{ color: "#dc2626" }}
                     >
-                      Verwijderen
+                      Remove
                     </button>
                   )}
                 </div>
@@ -228,42 +228,42 @@ export default function SettingsPage({
 
               <div className="form-grid">
                 <label>
-                  Voornaam
+                  First name
                   <input
                     value={profileDraft.firstName}
                     onChange={(event) =>
                       setProfileDraft({ ...profileDraft, firstName: event.target.value })
                     }
-                    placeholder="Voornaam"
+                    placeholder="First name"
                   />
                 </label>
                 <label>
-                  Achternaam
+                  Last name
                   <input
                     value={profileDraft.lastName}
                     onChange={(event) =>
                       setProfileDraft({ ...profileDraft, lastName: event.target.value })
                     }
-                    placeholder="Achternaam"
+                    placeholder="Last name"
                   />
                 </label>
               </div>
 
               <label>
-                E-mailadres
+                Email address
                 <input
                   value={profileDraft.email}
                   onChange={(event) =>
                     setProfileDraft({ ...profileDraft, email: event.target.value })
                   }
                   type="email"
-                  placeholder="naam@voorbeeld.nl"
+                  placeholder="name@example.com"
                 />
               </label>
 
               <div className="form-grid">
                 <label>
-                  Telefoonnummer
+                  Phone number
                   <input
                     value={profileDraft.phone || ""}
                     onChange={(event) =>
@@ -273,34 +273,34 @@ export default function SettingsPage({
                   />
                 </label>
                 <label>
-                  Woonplaats / Regio
+                  City / Region
                   <input
                     value={cityDraft}
                     onChange={(event) => setCityDraft(event.target.value)}
-                    placeholder="Plaats 1"
+                    placeholder="City 1"
                   />
                 </label>
               </div>
 
               <label>
-                Bio / Over jezelf
+                Bio / About you
                 <textarea
                   rows={4}
                   value={bioDraft}
                   onChange={(e) => setBioDraft(e.target.value)}
-                  placeholder="Vertel iets over jezelf, je betrouwbaarheid of wat je zoekt..."
+                  placeholder="Tell us about yourself, your reliability, or what you're looking for..."
                 />
               </label>
             </div>
           )}
 
-          {/* TAB: MELDINGEN */}
-          {section === "Meldingen" && (
+          {/* TAB: NOTIFICATIONS */}
+          {section === "Notifications" && (
             <div className="preference-list">
               <label>
                 <span className="pref-text">
-                  <b>Pushmeldingen</b>
-                  <small>Ontvang realtime updates voor nieuwe berichten, biedingen en orders</small>
+                  <b>Push notifications</b>
+                  <small>Get real-time updates for new messages, offers, and orders</small>
                 </span>
                 <input
                   type="checkbox"
@@ -311,8 +311,8 @@ export default function SettingsPage({
 
               <label>
                 <span className="pref-text">
-                  <b>E-mailmeldingen</b>
-                  <small>Prijsverlagingen van favoriete artikelen en opgeslagen zoekopdrachten</small>
+                  <b>Email notifications</b>
+                  <small>Price drops on favorite items and saved searches</small>
                 </span>
                 <input
                   type="checkbox"
@@ -323,8 +323,8 @@ export default function SettingsPage({
 
               <label>
                 <span className="pref-text">
-                  <b>Notificatiegeluid</b>
-                  <small>Speel een subtiel geluid af bij binnenkomende chatberichten</small>
+                  <b>Notification sound</b>
+                  <small>Play a subtle sound for incoming chat messages</small>
                 </span>
                 <input
                   type="checkbox"
@@ -335,8 +335,8 @@ export default function SettingsPage({
 
               <label>
                 <span className="pref-text">
-                  <b>Wekelijkse nieuwsbrief & tips</b>
-                  <small>Ontvang wekelijkse selecties en tips om sneller te verkopen</small>
+                  <b>Weekly newsletter & tips</b>
+                  <small>Get weekly picks and tips to sell faster</small>
                 </span>
                 <input
                   type="checkbox"
@@ -347,18 +347,18 @@ export default function SettingsPage({
             </div>
           )}
 
-          {/* TAB: PRIVACY & BEVEILIGING */}
-          {section === "Privacy & beveiliging" && (
+          {/* TAB: PRIVACY & SECURITY */}
+          {section === "Privacy & security" && (
             <div>
               <div className="preference-list">
                 <label>
                   <span className="pref-text">
-                    <b>Twee-staps-verificatie (2FA)</b>
-                    <small>Beveilig je account extra met een sms- of authenticator-code</small>
+                    <b>Two-factor authentication (2FA)</b>
+                    <small>Add an extra layer of security with an SMS or authenticator code</small>
                   </span>
                   <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                     <span className={`badge ${twoFactor ? "badge-success" : "badge-muted"}`}>
-                      {twoFactor ? "Actief" : "Inactief"}
+                      {twoFactor ? "Active" : "Inactive"}
                     </span>
                     <input
                       type="checkbox"
@@ -370,8 +370,8 @@ export default function SettingsPage({
 
                 <label>
                   <span className="pref-text">
-                    <b>Telefoonnummer tonen bij advertenties</b>
-                    <small>Alleen geverifieerde kopers kunnen telefonisch contact met je opnemen</small>
+                    <b>Show phone number on listings</b>
+                    <small>Only verified buyers can contact you by phone</small>
                   </span>
                   <input
                     type="checkbox"
@@ -381,10 +381,10 @@ export default function SettingsPage({
                 </label>
               </div>
 
-              <h3 className="settings-section-title">Wachtwoord wijzigen</h3>
+              <h3 className="settings-section-title">Change password</h3>
               <form onSubmit={handlePasswordSubmit} className="sub-card">
                 <label style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                  <span style={{ fontSize: "13px", fontWeight: 600 }}>Huidig wachtwoord</span>
+                  <span style={{ fontSize: "13px", fontWeight: 600 }}>Current password</span>
                   <input
                     type="password"
                     value={currentPassword}
@@ -401,12 +401,12 @@ export default function SettingsPage({
                 </label>
                 <div className="form-grid">
                   <label style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                    <span style={{ fontSize: "13px", fontWeight: 600 }}>Nieuw wachtwoord</span>
+                    <span style={{ fontSize: "13px", fontWeight: 600 }}>New password</span>
                     <input
                       type="password"
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      placeholder="Minimaal 8 tekens"
+                      placeholder="At least 8 characters"
                       style={{
                         border: "1px solid var(--line)",
                         background: "var(--surface)",
@@ -417,12 +417,12 @@ export default function SettingsPage({
                     />
                   </label>
                   <label style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                    <span style={{ fontSize: "13px", fontWeight: 600 }}>Bevestig nieuw wachtwoord</span>
+                    <span style={{ fontSize: "13px", fontWeight: 600 }}>Confirm new password</span>
                     <input
                       type="password"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      placeholder="Herhaal nieuw wachtwoord"
+                      placeholder="Repeat new password"
                       style={{
                         border: "1px solid var(--line)",
                         background: "var(--surface)",
@@ -437,7 +437,7 @@ export default function SettingsPage({
                   <p
                     style={{
                       fontSize: "13px",
-                      color: passwordStatus.includes("succesvol") ? "#16a34a" : "#dc2626",
+                      color: passwordStatus.includes("successfully") ? "#16a34a" : "#dc2626",
                       margin: "4px 0",
                     }}
                   >
@@ -446,27 +446,27 @@ export default function SettingsPage({
                 )}
                 <div>
                   <button className="secondary" type="submit">
-                    Wachtwoord bijwerken
+                    Update password
                   </button>
                 </div>
               </form>
 
-              <h3 className="settings-section-title">Gegevens & privacy</h3>
+              <h3 className="settings-section-title">Data & privacy</h3>
               <div className="sub-card">
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <div>
-                    <b style={{ fontSize: "14px" }}>Zoekgeschiedenis en cookies wissen</b>
+                    <b style={{ fontSize: "14px" }}>Clear search history and cookies</b>
                     <p style={{ margin: "4px 0 0", color: "var(--muted)", fontSize: "13px" }}>
-                      Verwijder al je lokaal opgeslagen zoekopdrachten en cache.
+                      Delete all locally stored searches and cache.
                     </p>
                   </div>
                   <button className="secondary" type="button" onClick={handleClearHistory}>
-                    {historyCleared ? "Gewist ✓" : "Geschiedenis wissen"}
+                    {historyCleared ? "Cleared ✓" : "Clear history"}
                   </button>
                 </div>
               </div>
 
-              <h3 className="settings-section-title">Account beëindigen</h3>
+              <h3 className="settings-section-title">Close account</h3>
               <div className="account-close-card">
                 <div
                   style={{
@@ -478,9 +478,9 @@ export default function SettingsPage({
                   }}
                 >
                   <div>
-                    <b style={{ fontSize: "14px", display: "block" }}>Account opzeggen</b>
+                    <b style={{ fontSize: "14px", display: "block" }}>Close account</b>
                     <p style={{ margin: "4px 0 0", color: "var(--muted)", fontSize: "13px" }}>
-                      Sluit je account en verwijder je persoonsgegevens volgens de privacywetgeving (AVG).
+                      Close your account and delete your personal data in accordance with privacy law (GDPR).
                     </p>
                   </div>
                   {onDeleteAccount && (
@@ -490,7 +490,7 @@ export default function SettingsPage({
                       onClick={() => setShowDeleteModal(true)}
                       style={{ color: "#dc2626", borderColor: "var(--line)" }}
                     >
-                      Account sluiten...
+                      Close account...
                     </button>
                   )}
                 </div>
@@ -498,15 +498,15 @@ export default function SettingsPage({
             </div>
           )}
 
-          {/* TAB: BETALEN */}
-          {section === "Betalen" && (
+          {/* TAB: PAYMENTS */}
+          {section === "Payments" && (
             <div className="settings-form">
               <h3 className="settings-section-title" style={{ marginTop: 0 }}>
-                Uitbetalingen van verkopen
+                Payouts from sales
               </h3>
               <div className="form-grid">
                 <label>
-                  IBAN Rekeningnummer
+                  IBAN bank account number
                   <input
                     value={iban}
                     onChange={(e) => setIban(e.target.value)}
@@ -514,11 +514,11 @@ export default function SettingsPage({
                   />
                 </label>
                 <label>
-                  Naam rekeninghouder
+                  Account holder name
                   <input
                     value={accountHolder}
                     onChange={(e) => setAccountHolder(e.target.value)}
-                    placeholder="Naam zoals op bankrekening"
+                    placeholder="Name as shown on bank account"
                   />
                 </label>
               </div>
@@ -526,9 +526,9 @@ export default function SettingsPage({
               <div className="preference-list">
                 <label>
                   <span className="pref-text">
-                    <b>Automatische uitbetaling</b>
+                    <b>Automatic payout</b>
                     <small>
-                      Ontvang je verkoopopbrengst automatisch binnen 24 uur na bevestiging door de koper
+                      Receive your sale proceeds automatically within 24 hours after buyer confirmation
                     </small>
                   </span>
                   <input
@@ -539,9 +539,9 @@ export default function SettingsPage({
                 </label>
               </div>
 
-              <h3 className="settings-section-title">Standaard betaalmethode (Kopen)</h3>
+              <h3 className="settings-section-title">Default payment method (buying)</h3>
               <label>
-                Voorkeursmethode voor Kopersbescherming
+                Preferred method for Buyer Protection
                 <select
                   value={paymentMethod}
                   onChange={(e) => setPaymentMethod(e.target.value)}
@@ -555,7 +555,7 @@ export default function SettingsPage({
                   }}
                 >
                   <option value="iDEAL">iDEAL</option>
-                  <option value="Creditcard">Creditcard (Visa / Mastercard)</option>
+                  <option value="Creditcard">Credit card (Visa / Mastercard)</option>
                   <option value="Bancontact">Bancontact</option>
                   <option value="ApplePay">Apple Pay</option>
                 </select>
@@ -565,10 +565,10 @@ export default function SettingsPage({
                 <div style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
                   <Icon name="shield" size={24} />
                   <div>
-                    <b style={{ fontSize: "14px" }}>Veilige betaling via Kopersbescherming</b>
+                    <b style={{ fontSize: "14px" }}>Secure payment with Buyer Protection</b>
                     <p style={{ margin: "4px 0 0", color: "var(--muted)", fontSize: "13px" }}>
-                      Betalingen verlopen via onze gereguleerde betaalpartner. Jouw bankgegevens worden
-                      nooit gedeeld met andere kopers of verkopers.
+                      Payments are processed by our regulated payment partner. Your bank details are
+                      never shared with other buyers or sellers.
                     </p>
                   </div>
                 </div>
@@ -576,11 +576,11 @@ export default function SettingsPage({
             </div>
           )}
 
-          {/* TAB: WEERGAVE & REGIO */}
-          {section === "Weergave & regio" && (
+          {/* TAB: DISPLAY & REGION */}
+          {section === "Display & region" && (
             <div className="settings-form">
               <div>
-                <b style={{ fontSize: "14px", display: "block", marginBottom: "8px" }}>Thema</b>
+                <b style={{ fontSize: "14px", display: "block", marginBottom: "8px" }}>Theme</b>
                 <div className="theme-selector">
                   <button
                     className={`theme-card ${!dark ? "active" : ""}`}
@@ -588,7 +588,7 @@ export default function SettingsPage({
                     type="button"
                   >
                     <Icon name="sun" size={24} />
-                    <span>Licht</span>
+                    <span>Light</span>
                   </button>
                   <button
                     className={`theme-card ${dark ? "active" : ""}`}
@@ -596,7 +596,7 @@ export default function SettingsPage({
                     type="button"
                   >
                     <Icon name="moon" size={24} />
-                    <span>Donker</span>
+                    <span>Dark</span>
                   </button>
                   <button
                     className="theme-card"
@@ -607,14 +607,14 @@ export default function SettingsPage({
                     type="button"
                   >
                     <Icon name="menu" size={24} />
-                    <span>Systeem</span>
+                    <span>System</span>
                   </button>
                 </div>
               </div>
 
               <div className="form-grid">
                 <label>
-                  Taal
+                  Language
                   <select
                     value={language}
                     onChange={(e) => setLanguage(e.target.value)}
@@ -627,14 +627,14 @@ export default function SettingsPage({
                       color: "var(--ink)",
                     }}
                   >
-                    <option value="Nederlands">Nederlands (NL)</option>
+                    <option value="Dutch">Dutch (NL)</option>
                     <option value="English">English (EN)</option>
-                    <option value="Deutsch">Deutsch (DE)</option>
+                    <option value="Deutsch">German (DE)</option>
                   </select>
                 </label>
 
                 <label>
-                  Valuta
+                  Currency
                   <select
                     value={currency}
                     onChange={(e) => setCurrency(e.target.value)}
@@ -655,7 +655,7 @@ export default function SettingsPage({
               </div>
 
               <label>
-                Afstandseenheid
+                Distance unit
                 <select
                   value={distanceUnit}
                   onChange={(e) => setDistanceUnit(e.target.value)}
@@ -669,27 +669,27 @@ export default function SettingsPage({
                   }}
                 >
                   <option value="Kilometers (km)">Kilometers (km)</option>
-                  <option value="Mijlen (mi)">Mijlen (mi)</option>
+                  <option value="Miles (mi)">Miles (mi)</option>
                 </select>
               </label>
             </div>
           )}
 
-          {/* OPSLAAN BALK */}
+          {/* SAVE BAR */}
           <div className="settings-save">
             {saved && (
               <span>
-                <Icon name="check" size={17} /> Wijzigingen succesvol opgeslagen!
+                <Icon name="check" size={17} /> Changes saved successfully!
               </span>
             )}
             <button className="primary" onClick={save} type="button">
-              Wijzigingen opslaan
+              Save changes
             </button>
           </div>
         </section>
       </div>
 
-      {/* BEVESTIGINGSMODAL ACCOUNT OPZEGGEN */}
+      {/* CLOSE ACCOUNT CONFIRMATION MODAL */}
       {showDeleteModal && (
         <div className="modal-backdrop" onClick={() => setShowDeleteModal(false)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
@@ -703,10 +703,10 @@ export default function SettingsPage({
             >
               <Icon name="close" />
             </button>
-            <span className="eyebrow">Account opzeggen</span>
-            <h2>Weet je zeker dat je je account wilt sluiten?</h2>
+            <span className="eyebrow">Close account</span>
+            <h2>Are you sure you want to close your account?</h2>
             <p style={{ margin: "10px 0 16px", color: "var(--muted)", fontSize: "14px", lineHeight: 1.5 }}>
-              Wat jammer dat je weggaat. Als je je account sluit:
+              We're sorry to see you go. If you close your account:
             </p>
             <ul
               style={{
@@ -719,9 +719,9 @@ export default function SettingsPage({
                 gap: "6px",
               }}
             >
-              <li>Worden al je actieve advertenties direct offline gehaald.</li>
-              <li>Kunnen kopers en verkopers je geen nieuwe berichten sturen.</li>
-              <li>Worden je persoonsgegevens definitief gewist volgens de AVG.</li>
+              <li>All your active listings will be taken offline immediately.</li>
+              <li>Buyers and sellers will no longer be able to send you new messages.</li>
+              <li>Your personal data will be permanently deleted in accordance with GDPR.</li>
             </ul>
             <div style={{ margin: "16px 0" }}>
               <label
@@ -734,7 +734,7 @@ export default function SettingsPage({
                   fontWeight: 600,
                 }}
               >
-                <span>Reden van vertrek (optioneel):</span>
+                <span>Reason for leaving (optional):</span>
                 <select
                   value={deleteReason}
                   onChange={(e) => setDeleteReason(e.target.value)}
@@ -748,12 +748,12 @@ export default function SettingsPage({
                     fontSize: "13px",
                   }}
                 >
-                  <option value="">Kies een reden...</option>
-                  <option value="Ik heb alles verkocht">Ik heb alles verkocht</option>
-                  <option value="Ik gebruik het platform niet meer">Ik gebruik het platform niet meer</option>
-                  <option value="Ik heb een ander account">Ik heb een ander account</option>
-                  <option value="Privacyredenen">Privacyredenen</option>
-                  <option value="Anders">Anders</option>
+                  <option value="">Choose a reason...</option>
+                  <option value="I sold everything">I sold everything</option>
+                  <option value="I no longer use the platform">I no longer use the platform</option>
+                  <option value="I have another account">I have another account</option>
+                  <option value="Privacy reasons">Privacy reasons</option>
+                  <option value="Other">Other</option>
                 </select>
               </label>
             </div>
@@ -773,7 +773,7 @@ export default function SettingsPage({
                 style={{ marginTop: "3px" }}
               />
               <span style={{ fontSize: "13px", color: "var(--ink)", lineHeight: 1.4 }}>
-                Ik begrijp dat al mijn advertenties en berichten definitief worden verwijderd.
+                I understand that all my listings and messages will be permanently deleted.
               </span>
             </label>
             <div
@@ -792,7 +792,7 @@ export default function SettingsPage({
                   setConfirmDeleteChecked(false);
                 }}
               >
-                Account behouden
+                Keep account
               </button>
               <button
                 className="btn-danger"
@@ -807,7 +807,7 @@ export default function SettingsPage({
                   onDeleteAccount?.();
                 }}
               >
-                Definitief opzeggen
+                Close account permanently
               </button>
             </div>
           </div>

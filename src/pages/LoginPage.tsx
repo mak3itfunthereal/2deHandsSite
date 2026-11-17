@@ -14,9 +14,9 @@ export default function LoginPage({
     <main className="login-page">
       <div className="login-card">
         <span className="login-mark">b</span>
-        <span className="eyebrow">Welkom terug</span>
-        <h1>Log in bij Bidzaar</h1>
-        <p>Ga verder met kopen, verkopen en berichten.</p>
+        <span className="eyebrow">Welcome back</span>
+        <h1>Log in to Bidzaar</h1>
+        <p>Continue buying, selling, and messaging.</p>
         <form
           onSubmit={(event) => {
             event.preventDefault();
@@ -24,40 +24,40 @@ export default function LoginPage({
           }}
         >
           <label>
-            E-mailadres
+            Email address
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="naam@voorbeeld.nl"
+              placeholder="name@example.com"
             />
           </label>
           <label>
-            Wachtwoord
+            Password
             <input
               type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Minimaal 8 tekens"
+              placeholder="At least 8 characters"
             />
           </label>
           <button type="button" className="forgot">
-            Wachtwoord vergeten?
+            Forgot password?
           </button>
           <button className="primary" type="submit">
-            Inloggen
+            Log in
           </button>
         </form>
         <div className="login-divider">
-          <span>of</span>
+          <span>or</span>
         </div>
         <button className="secondary social-login" onClick={onLogin}>
-          Doorgaan met Google
+          Continue with Google
         </button>
         <p className="register-link">
-          Nog geen account? <button onClick={() => setPage("register")}>Registreren</button>
+          No account yet? <button onClick={() => setPage("register")}>Sign up</button>
         </p>
       </div>
     </main>
