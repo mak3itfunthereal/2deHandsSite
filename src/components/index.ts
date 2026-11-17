@@ -8,3 +8,4 @@ export * from "./RowTitle";
 export * from "./ProductGrid";
 export * from "./CookieConsent";
 export * from "./Footer";
+export * from "./CategoryButtons";
