@@ -1,7 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import type { LocationPreference, Page, Product } from "../types";
 import { categories, distanceBetween, products as defaultProducts } from "../utils/marketplace";
-import { Icon, LocationControls, ProductCard, ProductCardSkeleton } from "../components/ui";
+import { matchesCategory, matchesQuery } from "../utils/search";
+import {
+  CategoryButtons,
+  Icon,
+  LocationControls,
+  ProductCard,
+  ProductCardSkeleton,
+} from "../components/ui";
 
 function FilterPanel({
   onClose,
@@ -41,7 +48,7 @@ function FilterPanel({
       <div className="filter-head">
         <h2>Filters</h2>
         {onClose && (
-          <button className="icon-btn" onClick={onClose} type="button">
+          <button className="icon-btn" onClick={onClose} type="button" aria-label="Close filters">
             <Icon name="close" />
           </button>
         )}
@@ -219,17 +226,13 @@ export default function SearchPage({
           return false;
         }
 
-        // Query check
-        if (query.trim()) {
-          const q = query.trim().toLowerCase();
-          const matchTitle = product.title.toLowerCase().includes(q);
-          const matchCat = product.category.toLowerCase().includes(q);
-          const matchCity = product.city.toLowerCase().includes(q);
-          if (!matchTitle && !matchCat && !matchCity) return false;
+        // Query check: every word must appear in title or description (see utils/search.ts)
+        if (!matchesQuery(product, query)) {
+          return false;
         }
 
         // Category check
-        if (category && product.category.toLowerCase() !== category.toLowerCase()) {
+        if (!matchesCategory(product, category)) {
           return false;
         }
 
@@ -324,38 +327,68 @@ export default function SearchPage({
         </button>
       </div>
 
+      <form
+        className="search-page-form"
+        role="search"
+        onSubmit={(e) => e.preventDefault()}
+      >
+        <label htmlFor="search-page-input" className="sr-only">
+          Search ads
+        </label>
+        <Icon name="search" size={18} />
+        <input
+          id="search-page-input"
+          type="search"
+          placeholder="Search in titles and descriptions"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          autoComplete="off"
+        />
+        {query && (
+          <button type="button" aria-label="Clear search" onClick={() => setQuery("")}>
+            <Icon name="close" size={16} />
+          </button>
+        )}
+      </form>
+
+      <CategoryButtons
+        categories={categories.map((c) => c.name)}
+        selected={category}
+        onSelect={setCategory}
+      />
+
       <div className="chips">
         <span>
           {location.city} + {location.radius} km
         </span>
         {category && (
           <span>
-            {category} <button onClick={() => setCategory("")}>×</button>
+            {category}{" "}<button type="button" aria-label="Remove category filter" onClick={() => setCategory("")}>×</button>
           </span>
         )}
         {query && (
           <span>
-            “{query}” <button onClick={() => setQuery("")}>×</button>
+            “{query}”{" "}<button type="button" aria-label="Clear search" onClick={() => setQuery("")}>×</button>
           </span>
         )}
         {condition && (
           <span>
-            {condition} <button onClick={() => setCondition("")}>×</button>
+            {condition}{" "}<button type="button" aria-label="Remove condition filter" onClick={() => setCondition("")}>×</button>
           </span>
         )}
         {maxPrice < 1000 && (
           <span>
-            Up to €{maxPrice} <button onClick={() => setMaxPrice(1000)}>×</button>
+            Up to €{maxPrice}{" "}<button type="button" aria-label="Remove price filter" onClick={() => setMaxPrice(1000)}>×</button>
           </span>
         )}
         {shippingOnly && (
           <span>
-            Shipping available <button onClick={() => setShippingOnly(false)}>×</button>
+            Shipping available{" "}<button type="button" aria-label="Remove shipping filter" onClick={() => setShippingOnly(false)}>×</button>
           </span>
         )}
         {protectionOnly && (
           <span>
-            Buyer Protection <button onClick={() => setProtectionOnly(false)}>×</button>
+            Buyer Protection{" "}<button type="button" aria-label="Remove buyer protection filter" onClick={() => setProtectionOnly(false)}>×</button>
           </span>
         )}
         {(category || query || condition || maxPrice < 1000 || shippingOnly || protectionOnly) && (

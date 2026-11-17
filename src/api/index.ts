@@ -2,6 +2,7 @@ import { createApiClient, type ProductFilterParams } from "./client";
 import type { Conversation, Product, UserProfile } from "../types";
 import { initialConversations, products as defaultProducts } from "../utils/mockData";
 import { defaultUser } from "../utils/mockData";
+import { matchesCategory, matchesQuery } from "../utils/search";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 export const rawApiClient = createApiClient(API_BASE_URL || "/api");
@@ -64,16 +65,10 @@ export const api = {
 
     let list = getLocalProducts();
     if (params?.query) {
-      const q = params.query.toLowerCase().trim();
-      list = list.filter(
-        (p) =>
-          p.title.toLowerCase().includes(q) ||
-          p.category.toLowerCase().includes(q) ||
-          p.city.toLowerCase().includes(q),
-      );
+      list = list.filter((p) => matchesQuery(p, params.query!));
     }
     if (params?.category) {
-      list = list.filter((p) => p.category.toLowerCase() === params.category!.toLowerCase());
+      list = list.filter((p) => matchesCategory(p, params.category!));
     }
     if (params?.state) {
       list = list.filter((p) => p.state === params.state);
