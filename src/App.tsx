@@ -27,15 +27,10 @@ import MyAdsPage from "./pages/MyAdsPage";
 import SettingsPage from "./pages/SettingsPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import { loadFavorites, saveFavorites } from "./api/favorites";
 
 function loadStoredFavorites(): Set<number> {
-  try {
-    const raw = window.localStorage.getItem("bidzaar-favorites");
-    if (raw) return new Set(JSON.parse(raw));
-  } catch {
-    // ignore
-  }
-  return new Set([3]);
+  return new Set(loadFavorites());
 }
 
 function loadStoredTheme(): boolean {
@@ -212,10 +207,7 @@ export default function App() {
   }, [location]);
 
   useEffect(() => {
-    window.localStorage.setItem(
-      "bidzaar-favorites",
-      JSON.stringify(Array.from(favorites)),
-    );
+    saveFavorites(favorites);
   }, [favorites]);
 
   useEffect(() => {
@@ -527,6 +519,7 @@ export default function App() {
           searchQuery={searchQuery}
           onSearch={handleHeaderSearch}
           onCategorySelect={handleHeaderCategorySelect}
+          favoritesCount={favorites.size}
           onLogout={() => {
             setLoggedIn(false);
             window.localStorage.setItem("bidzaar-auth", "false");

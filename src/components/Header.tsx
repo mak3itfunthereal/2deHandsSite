@@ -3,6 +3,7 @@ import type { LocationPreference, Page, UserProfile } from "../types";
 import { userFullName, userInitials } from "../utils/marketplace";
 import { Icon } from "./Icon";
 import { ThemeToggle } from "./ThemeToggle";
+import { SavedButton } from "./SavedButton";
 import { Logo } from "./Logo";
 import { LocationControls } from "./LocationControls";
 
@@ -58,6 +59,7 @@ export function Header({
   searchQuery = "",
   onSearch,
   onCategorySelect,
+  favoritesCount = 0,
 }: {
   page: Page;
   setPage: (p: Page) => void;
@@ -71,6 +73,8 @@ export function Header({
   searchQuery?: string;
   onSearch?: (query: string) => void;
   onCategorySelect?: (category: string) => void;
+  /** Number of saved (favorite) ads, shown as a badge on the heart */
+  favoritesCount?: number;
 }) {
   const [open, setOpen] = useState(false);
   const [notifications, setNotifications] = useState(false);
@@ -364,9 +368,7 @@ export function Header({
         )}
         <nav className="actions">
           <ThemeToggle dark={dark} setDark={setDark} />
-          <button className="icon-btn" aria-label="Favorites" onClick={() => setPage("account")}>
-            <Icon name="heart" />
-          </button>
+          <SavedButton count={favoritesCount} onClick={() => setPage("account")} />
           <button
             className="icon-btn badge-wrap"
             onClick={() => setPage("chat")}
@@ -456,6 +458,7 @@ export function Header({
         </nav>
         <div className="mobile-actions">
           <ThemeToggle dark={dark} setDark={setDark} />
+          <SavedButton count={favoritesCount} onClick={() => setPage("account")} />
           <button className="icon-btn" onClick={() => setPage("search")}           aria-label="Search">
             <Icon name="search" />
           </button>

@@ -83,7 +83,7 @@ export default function AccountPage({
 
               {favoritedProducts.length > 0 ? (
                 <ProductGrid
-                  count={12}
+                  count={favoritedProducts.length}
                   items={favoritedProducts}
                   onOpenProduct={(id) => {
                     if (onSelectProduct) onSelectProduct(id);
