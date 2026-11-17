@@ -1,7 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import type { LocationPreference, Page, Product } from "../types";
 import { categories, distanceBetween, products as defaultProducts } from "../utils/marketplace";
-import { matchesCategory, matchesQuery } from "../utils/search";
+import { matchesCategory, matchesQuery, searchKey, type SearchCriteria } from "../utils/search";
+import {
+  deleteSavedSearch,
+  getSavedSearches,
+  saveSearch,
+  type SavedSearch,
+} from "../api/savedSearches";
 import {
   CategoryButtons,
   Icon,
@@ -175,7 +181,10 @@ export default function SearchPage({
 }) {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [sort, setSort] = useState("Most relevant");
-  const [saved, setSaved] = useState(false);
+  // Saved searches for email alerts (AB#523)
+  const [savedSearches, setSavedSearches] = useState<SavedSearch[]>([]);
+  const [savingSearch, setSavingSearch] = useState(false);
+  const [saveMessage, setSaveMessage] = useState("");
   const [query, setQuery] = useState(initialQuery);
   const [category, setCategory] = useState(initialCategory || "");
   const [maxPrice, setMaxPrice] = useState(1000);
@@ -269,6 +278,51 @@ export default function SearchPage({
       });
   }, [products, location, query, category, condition, maxPrice, sort, shippingOnly, protectionOnly]);
 
+  // Load the user's saved searches once, so we know if this search is already saved
+  useEffect(() => {
+    getSavedSearches()
+      .then(setSavedSearches)
+      .catch(() => setSavedSearches([]));
+  }, []);
+
+  // The current filters, in the format the backend expects
+  const currentCriteria: SearchCriteria = {
+    query: query.trim(),
+    category,
+    condition,
+    maxPrice: maxPrice < 1000 ? maxPrice : null,
+    shippingOnly,
+    protectionOnly,
+    city: location.city,
+    radius: location.radius,
+  };
+  const currentKey = searchKey(currentCriteria);
+  const currentSaved = savedSearches.find((s) => searchKey(s) === currentKey);
+
+  // Clear the message when the user changes the search
+  useEffect(() => {
+    setSaveMessage("");
+  }, [currentKey]);
+
+  const handleToggleSaveSearch = async () => {
+    setSavingSearch(true);
+    try {
+      if (currentSaved) {
+        await deleteSavedSearch(currentSaved.id);
+        setSavedSearches((list) => list.filter((s) => s.id !== currentSaved.id));
+        setSaveMessage("Email alerts turned off for this search.");
+      } else {
+        const created = await saveSearch(currentCriteria);
+        setSavedSearches((list) => [created, ...list.filter((s) => s.id !== created.id)]);
+        setSaveMessage("Search saved. We'll email you when new matching listings are posted.");
+      }
+    } catch {
+      setSaveMessage("Could not save your search. Please try again.");
+    } finally {
+      setSavingSearch(false);
+    }
+  };
+
   const handleCardClick = (productId: number) => {
     if (onSelectProduct) {
       onSelectProduct(productId);
@@ -317,14 +371,19 @@ export default function SearchPage({
           </h1>
         </div>
         <button
-          className={saved ? "secondary saved" : "secondary"}
-          onClick={() => setSaved(!saved)}
+          className={currentSaved ? "secondary saved" : "secondary"}
+          onClick={handleToggleSaveSearch}
+          disabled={savingSearch}
+          aria-pressed={Boolean(currentSaved)}
           type="button"
         >
           <Icon name="bell" />
-          {saved ? "Search saved" : "Save search"}
+          {currentSaved ? "Search saved" : "Save search"}
         </button>
       </div>
+      <p className="save-search-message" role="status">
+        {saveMessage}
+      </p>
 
       <form
         className="search-page-form"

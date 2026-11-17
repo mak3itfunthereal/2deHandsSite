@@ -250,6 +250,28 @@
   display: none;
 }
 
+/* Message after saving a search (work item 523) */
+.save-search-message {
+  margin: 8px 0 0;
+  min-height: 1.4em;
+  color: var(--muted);
+  font-size: 14px;
+  text-align: right;
+}
+.save-search-message:empty {
+  min-height: 0;
+  margin: 0;
+}
+.results-heading button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+@media (max-width: 720px) {
+  .save-search-message {
+    text-align: left;
+  }
+}
+
 /* Visually hidden, but still read by screen readers */
 .sr-only {
   position: absolute;

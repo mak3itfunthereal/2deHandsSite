@@ -43,3 +43,25 @@ test("category filter", () => {
   assert.equal(matchesCategory(bike, "bikes"), true);
   assert.equal(matchesCategory(bike, "Furniture"), false);
 });
+
+const criteria = {
+  query: "red bike",
+  category: "Bikes",
+  condition: "",
+  maxPrice: null,
+  shippingOnly: false,
+  protectionOnly: false,
+  city: "Utrecht",
+  radius: 25,
+};
+
+test("searchKey ignores word order and capitals", async () => {
+  const { searchKey } = await import("../src/utils/search.ts");
+  assert.equal(searchKey(criteria), searchKey({ ...criteria, query: "Bike  RED" }));
+});
+
+test("searchKey changes when a filter changes", async () => {
+  const { searchKey } = await import("../src/utils/search.ts");
+  assert.notEqual(searchKey(criteria), searchKey({ ...criteria, radius: 50 }));
+  assert.notEqual(searchKey(criteria), searchKey({ ...criteria, maxPrice: 200 }));
+});

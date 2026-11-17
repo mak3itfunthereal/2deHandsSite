@@ -40,6 +40,36 @@ export function matchesQuery(
   return words.every((word) => searchable.includes(word));
 }
 
+/** The filters of a search that a user can save for email alerts (work item 523). */
+export type SearchCriteria = {
+  query: string;
+  category: string;
+  condition: string;
+  maxPrice: number | null;
+  shippingOnly: boolean;
+  protectionOnly: boolean;
+  city: string;
+  radius: number;
+};
+
+/**
+ * A short text that is the same for two searches with the same filters.
+ * Used to check if the current search is already saved.
+ * Word order and capitals don't matter: "Red Bike" and "bike red" give the same key.
+ */
+export function searchKey(criteria: SearchCriteria): string {
+  return JSON.stringify([
+    splitWords(criteria.query).sort().join(" "),
+    normalizeText(criteria.category),
+    normalizeText(criteria.condition),
+    criteria.maxPrice ?? null,
+    criteria.shippingOnly,
+    criteria.protectionOnly,
+    normalizeText(criteria.city),
+    criteria.radius,
+  ]);
+}
+
 /** True when no category is chosen, or the product is in the chosen category. */
 export function matchesCategory(product: Pick<Product, "category">, category: string): boolean {
   if (!category) return true;
