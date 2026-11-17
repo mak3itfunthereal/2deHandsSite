@@ -4,8 +4,7 @@
   }
   .location,
   .profile-btn svg,
-  .actions > .theme,
-  .actions > .icon-btn {
+  .actions > .icon-btn:not(.theme) {
     display: none;
   }
   .profile-btn {

@@ -31,7 +31,8 @@ export function ProductCard({
       <button
         className={`heart-btn ${favorite ? "liked" : ""}`}
         onClick={toggle}
-        aria-label="Save listing"
+        aria-label={favorite ? `Remove ${item.title} from saved` : `Save ${item.title}`}
+        aria-pressed={favorite}
         type="button"
       >
         <Icon name="heart" fill={favorite ? "currentColor" : "none"} />
@@ -47,7 +48,7 @@ export function ProductCard({
               ? `${Number(item.calculatedDistance).toLocaleString("en-GB", { maximumFractionDigits: 1 })} km`
               : item.distance}
           </span>
-          <span>Today</span>
+          {item.createdAt && <span>{item.createdAt}</span>}
         </div>
       </button>
     </article>
