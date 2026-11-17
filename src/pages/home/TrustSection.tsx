@@ -9,22 +9,22 @@ export function TrustSection() {
         </span>
       </div>
       <div className="trust-copy">
-        <span className="eyebrow">Zorgeloos handelen</span>
-        <h2>Betaal veilig. Wij houden je aankoop beschermd.</h2>
-        <p>Je geld wordt pas vrijgegeven als je bestelling goed is aangekomen.</p>
+        <span className="eyebrow">Trade with confidence</span>
+        <h2>Pay safely. We protect your purchase.</h2>
+        <p>Your money is only released once your order has arrived safely.</p>
         <a className="text-button" href="#veilig-kopen">
-          Zo werkt kopersbescherming <Icon name="arrow" size={17} />
+          How Buyer Protection works <Icon name="arrow" size={17} />
         </a>
       </div>
       <ul>
         <li>
-          <Icon name="check" size={18} /> Veilig betalen
+          <Icon name="check" size={18} /> Safe payments
         </li>
         <li>
-          <Icon name="check" size={18} /> 24/7 fraudedetectie
+          <Icon name="check" size={18} /> 24/7 fraud detection
         </li>
         <li>
-          <Icon name="check" size={18} /> Hulp bij problemen
+          <Icon name="check" size={18} /> Help when you need it
         </li>
       </ul>
     </section>

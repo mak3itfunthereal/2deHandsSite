@@ -20,7 +20,7 @@ export function LocationControls({
   const [error, setError] = useState("");
   const findLocation = async () => {
     if (query.trim().length < 2) {
-      setError("Vul minimaal twee tekens in.");
+      setError("Enter at least two characters.");
       return;
     }
     setLoading(true);
@@ -34,7 +34,7 @@ export function LocationControls({
         `type:${/^\d/.test(query.trim()) ? "postcode" : "woonplaats"}`,
       );
       const response = await fetch(endpoint);
-      if (!response.ok) throw new Error("Locatie zoeken mislukt");
+      if (!response.ok) throw new Error("Location search failed");
       const data = (await response.json()) as {
         response?: {
           docs?: Array<{
@@ -49,7 +49,7 @@ export function LocationControls({
       const result = data.response?.docs?.[0];
       const coordinates = result?.centroide_ll?.match(/POINT\(([-\d.]+)\s+([-\d.]+)\)/);
       if (!result || !coordinates) {
-        setError("Geen plaats of postcode gevonden.");
+        setError("No city or postcode found.");
         return;
       }
       const city =
@@ -67,7 +67,7 @@ export function LocationControls({
       setQuery(`${result.postcode ? `${result.postcode} ` : ""}${city}`);
       onDone?.();
     } catch {
-      setError("Locatie kon niet worden opgezocht. Probeer opnieuw.");
+      setError("Could not find the location. Try again.");
     } finally {
       setLoading(false);
     }
@@ -75,7 +75,7 @@ export function LocationControls({
   const useCurrentLocation = () => {
     setError("");
     if (!navigator.geolocation) {
-      setError("Je browser ondersteunt geen locatiebepaling.");
+      setError("Your browser does not support location services.");
       return;
     }
     setLocating(true);
@@ -94,7 +94,7 @@ export function LocationControls({
           lat: coordinates.lat,
           lon: coordinates.lon,
         });
-        setQuery(`Huidige locatie · ${nearest.city}`);
+        setQuery(`Current location · ${nearest.city}`);
         setLocating(false);
         onDone?.();
       },
@@ -102,8 +102,8 @@ export function LocationControls({
         setLocating(false);
         setError(
           geolocationError.code === geolocationError.PERMISSION_DENIED
-            ? "Locatietoegang is geweigerd. Sta locatie toe in je browser."
-            : "Je huidige locatie kon niet worden bepaald.",
+            ? "Location access was denied. Allow location access in your browser."
+            : "Your current location could not be determined.",
         );
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 120000 },
@@ -112,7 +112,7 @@ export function LocationControls({
   return (
     <div className="location-controls">
       <label>
-        Plaats of postcode
+        City or postcode
         <form
           className="location-search-field"
           onSubmit={(event) => {
@@ -124,11 +124,11 @@ export function LocationControls({
           <input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Bijv. 1000 of Plaats 1"
-            aria-label="Vul een plaats of postcode in"
+            placeholder="e.g. 1000 or City 1"
+            aria-label="Enter a city or postcode"
           />
           <button type="submit" disabled={loading}>
-            {loading ? "Zoeken…" : "Zoek"}
+            {loading ? "Searching…" : "Search"}
           </button>
         </form>
         {error && <small className="location-error">{error}</small>}
@@ -140,10 +140,10 @@ export function LocationControls({
         disabled={locating}
       >
         <Icon name="pin" size={18} />
-        {locating ? "Huidige locatie bepalen…" : "Gebruik mijn huidige locatie"}
+        {locating ? "Finding current location…" : "Use my current location"}
       </button>
       <label>
-        Maximale afstand
+        Maximum distance
         <select
           value={location.radius}
           onChange={(event) => onChange({ ...location, radius: Number(event.target.value) })}
@@ -161,7 +161,7 @@ export function LocationControls({
         </span>
         <div>
           <b>{location.city}</b>
-          <small>Je ziet alleen advertenties binnen {location.radius} km</small>
+          <small>Only listings within {location.radius} km are shown</small>
         </div>
       </div>
     </div>

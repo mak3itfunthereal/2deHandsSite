@@ -5,22 +5,22 @@ export function SellBannerSection({ setPage }: { setPage: (page: Page) => void }
   return (
     <section className="sell-banner" id="verkopen">
       <div>
-        <span className="eyebrow eyebrow-light">Ruimte in huis, geld op zak</span>
-        <h2>Verkopen in 3 simpele stappen</h2>
+        <span className="eyebrow eyebrow-light">Make room, make money</span>
+        <h2>Sell in 3 easy steps</h2>
       </div>
       <ol>
         <li>
-          <i>1</i> Maak een foto
+          <i>1</i> Take a photo
         </li>
         <li>
-          <i>2</i> Kies je prijs
+          <i>2</i> Set your price
         </li>
         <li>
-          <i>3</i> Geef het door
+          <i>3</i> Pass it on
         </li>
       </ol>
       <button className="sell-link" onClick={() => setPage("sell")} type="button">
-        Plaats advertentie <Icon name="arrow" size={18} />
+        Post a listing <Icon name="arrow" size={18} />
       </button>
     </section>
   );

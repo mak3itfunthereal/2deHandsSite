@@ -28,15 +28,15 @@ export function ListingsSection({
     <section className="listings-section" id="aanbod" ref={sectionRef}>
       <div className="section-heading">
         <div>
-          <span className="eyebrow">Met zorg uitgezocht</span>
-          <h2>{activeCategory || "Aanbevolen voor jou"}</h2>
+          <span className="eyebrow">Carefully selected</span>
+          <h2>{activeCategory || "Recommended for you"}</h2>
           <p>
             {query
-              ? `Resultaten voor “${query.trim()}”`
-              : "Bijzondere vondsten, klaar voor een tweede leven."}
+              ? `Results for “${query.trim()}”`
+              : "Special finds, ready for a second life."}
           </p>
         </div>
-        <span className="listing-count">{visibleProducts.length} advertenties</span>
+        <span className="listing-count">{visibleProducts.length} listings</span>
       </div>
       {visibleProducts.length ? (
         <div className="product-grid">
@@ -51,12 +51,12 @@ export function ListingsSection({
                     e.currentTarget.src = GRAY_IMAGE;
                   }}
                 />
-                {product.top && <span className="top-tag">Uitgelicht</span>}
+                {product.top && <span className="top-tag">Featured</span>}
                 <button
                   aria-label={
                     favorites.has(product.id)
-                      ? `${product.title} uit favorieten verwijderen`
-                      : `${product.title} aan favorieten toevoegen`
+                      ? `Remove ${product.title} from favorites`
+                      : `Add ${product.title} to favorites`
                   }
                   aria-pressed={favorites.has(product.id)}
                   className={`heart-button${favorites.has(product.id) ? " liked" : ""}`}
@@ -94,10 +94,10 @@ export function ListingsSection({
           <span className="empty-icon">
             <Icon name="search" size={25} />
           </span>
-          <h3>Geen advertenties gevonden</h3>
-          <p>Probeer een andere zoekterm of bekijk het volledige aanbod.</p>
+          <h3>No listings found</h3>
+          <p>Try a different search term or browse all listings.</p>
           <button className="secondary-button" onClick={onResetSearch} type="button">
-            Bekijk alle advertenties
+            View all listings
           </button>
         </div>
       )}

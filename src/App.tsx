@@ -182,23 +182,23 @@ export default function App() {
 
   useEffect(() => {
     const titles: Record<Page, string> = {
-      home: "Bidzaar — Bewust tweedehands kopen en verkopen",
+      home: "Bidzaar — Buy and sell second-hand, consciously",
       search: searchQuery
-        ? `“${searchQuery}” zoeken — Bidzaar`
+        ? `Search “${searchQuery}” — Bidzaar`
         : selectedCategory
           ? `${selectedCategory} — Bidzaar`
-          : "Advertenties ontdekken — Bidzaar",
+          : "Discover listings — Bidzaar",
       detail: (() => {
         const prod = productsList.find((p) => p.id === selectedProductId);
-        return prod ? `${prod.title} — Bidzaar` : "Advertentie details — Bidzaar";
+        return prod ? `${prod.title} — Bidzaar` : "Listing details — Bidzaar";
       })(),
-      chat: "Berichten — Bidzaar",
-      sell: "Plaats een advertentie — Bidzaar",
-      account: "Mijn profiel — Bidzaar",
-      "my-ads": "Mijn advertenties — Bidzaar",
-      settings: "Instellingen — Bidzaar",
-      login: "Inloggen — Bidzaar",
-      register: "Account aanmaken — Bidzaar",
+      chat: "Messages — Bidzaar",
+      sell: "Post a listing — Bidzaar",
+      account: "My profile — Bidzaar",
+      "my-ads": "My listings — Bidzaar",
+      settings: "Settings — Bidzaar",
+      login: "Log in — Bidzaar",
+      register: "Create an account — Bidzaar",
     };
     document.title = titles[page] || "Bidzaar";
   }, [page, searchQuery, selectedCategory, selectedProductId, productsList]);
@@ -241,11 +241,11 @@ export default function App() {
     window.localStorage.setItem("bidzaar-consent", JSON.stringify(preferences));
     setShowConsent(false);
     if (!preferences.location) {
-      setNotice(`Cookievoorkeuren opgeslagen. Je locatie blijft ${location.city}.`);
+      setNotice(`Cookie preferences saved. Your location remains ${location.city}.`);
       return;
     }
     if (!navigator.geolocation) {
-      setNotice("Locatie is niet beschikbaar. Kies handmatig een plaats en afstand.");
+      setNotice("Location is unavailable. Choose a city and distance manually.");
       return;
     }
     navigator.geolocation.getCurrentPosition(
@@ -262,10 +262,10 @@ export default function App() {
           lon: coordinates.lon,
           radius: 25,
         });
-        setNotice(`Locatie gevonden. Je ziet nu advertenties binnen 25 km van ${nearest.city}.`);
+        setNotice(`Location found. You will now see listings within 25 km of ${nearest.city}.`);
       },
       () => {
-        setNotice("Geen locatietoegang. Kies je plaats handmatig via de locatieknop.");
+        setNotice("No location access. Choose your city manually using the location button.");
       },
       { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 },
     );
@@ -275,21 +275,21 @@ export default function App() {
     const created = await api.createProduct(newProduct);
     setProductsList((prev) => [created, ...prev]);
     setSelectedProductId(created.id);
-    setNotice("Je advertentie is succesvol geplaatst!");
+    setNotice("Your listing has been posted successfully!");
     return created;
   };
 
   const handleDeleteProduct = async (id: number) => {
     await api.deleteProduct(id);
     setProductsList((prev) => prev.filter((p) => p.id !== id));
-    setNotice("Advertentie verwijderd.");
+    setNotice("Listing deleted.");
   };
 
   const handleUpdateProduct = (updated: Product) => {
     setProductsList((prev) =>
       prev.map((p) => (p.id === updated.id ? updated : p)),
     );
-    setNotice("Advertentie succesvol bijgewerkt.");
+    setNotice("Listing updated successfully.");
   };
 
   const handleProductStatusChange = (
@@ -301,10 +301,10 @@ export default function App() {
     );
     setNotice(
       status === "sold"
-        ? "Advertentie gemarkeerd als verkocht."
+        ? "Listing marked as sold."
         : status === "reserved"
-          ? "Advertentie gereserveerd."
-          : "Advertentie weer actief.",
+          ? "Listing reserved."
+          : "Listing is active again.",
     );
   };
 
@@ -312,7 +312,7 @@ export default function App() {
     setProductsList((prev) =>
       prev.map((p) => (p.id === productId ? { ...p, adStatus: "sold" } : p)),
     );
-    setNotice("Bestelling geplaatst! Je aankoop is beschermd via Kopersbescherming.");
+    setNotice("Order placed! Your purchase is protected by Buyer Protection.");
   };
 
   const handleAddBid = (
@@ -439,14 +439,14 @@ export default function App() {
             setLoggedIn(false);
             window.localStorage.setItem("bidzaar-auth", "false");
             setPage("home");
-            setNotice("Je bent veilig uitgelogd.");
+            setNotice("You have been logged out securely.");
           }}
           onDeleteAccount={() => {
             setLoggedIn(false);
             window.localStorage.removeItem("bidzaar-auth");
             window.localStorage.removeItem("bidzaar-user");
             setPage("home");
-            setNotice("Je account en advertenties zijn verwijderd.");
+            setNotice("Your account and listings have been deleted.");
           }}
         />
       );
@@ -457,7 +457,7 @@ export default function App() {
             setLoggedIn(true);
             window.localStorage.setItem("bidzaar-auth", "true");
             setPage("account");
-            setNotice("Je bent weer ingelogd.");
+            setNotice("You are logged in again.");
           }}
           setPage={setPage}
         />
@@ -472,7 +472,7 @@ export default function App() {
             window.localStorage.setItem("bidzaar-user", JSON.stringify(newUser));
             window.localStorage.setItem("bidzaar-auth", "true");
             setPage("account");
-            setNotice(`Welkom, ${newUser.firstName}! Je account is aangemaakt.`);
+            setNotice(`Welcome, ${newUser.firstName}! Your account has been created.`);
           }}
         />
       );
@@ -531,7 +531,7 @@ export default function App() {
             setLoggedIn(false);
             window.localStorage.setItem("bidzaar-auth", "false");
             setPage("home");
-            setNotice("Je bent veilig uitgelogd.");
+            setNotice("You have been logged out securely.");
           }}
         />
       )}

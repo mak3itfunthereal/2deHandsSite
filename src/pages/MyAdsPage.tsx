@@ -61,34 +61,34 @@ export default function MyAdsPage({
   return (
     <main className="shell standalone-page">
       <div className="page-back">
-        <button onClick={() => setPage("account")}>← Terug naar mijn profiel</button>
+        <button onClick={() => setPage("account")}>← Back to my profile</button>
       </div>
       <div className="standalone-heading">
         <div>
-          <span className="eyebrow">Beheer je aanbod</span>
-          <h1>Mijn advertenties</h1>
-          <p>Bekijk prestaties en beheer je actieve, verkochte en opgeslagen advertenties.</p>
+          <span className="eyebrow">Manage your listings</span>
+          <h1>My listings</h1>
+          <p>View performance and manage your active, sold, and saved listings.</p>
         </div>
         <button className="primary" onClick={() => setPage("sell")}>
-          <Icon name="plus" /> Nieuwe advertentie
+          <Icon name="plus" /> New listing
         </button>
       </div>
 
       <div className="status-cards">
         <button className={status === "active" ? "active" : ""} onClick={() => setStatus("active")}>
-          <span>Actief</span>
+          <span>Active</span>
           <b>{activeProducts.length}</b>
-          <small>Zichtbaar voor kopers</small>
+          <small>Visible to buyers</small>
         </button>
         <button className={status === "sold" ? "active" : ""} onClick={() => setStatus("sold")}>
-          <span>Verkocht</span>
+          <span>Sold</span>
           <b>{soldProducts.length}</b>
-          <small>Succesvol afgerond</small>
+          <small>Successfully completed</small>
         </button>
         <button className={status === "drafts" ? "active" : ""} onClick={() => setStatus("drafts")}>
-          <span>Concepten</span>
+          <span>Drafts</span>
           <b>0</b>
-          <small>Nog niets opgeslagen</small>
+          <small>Nothing saved yet</small>
         </button>
       </div>
 
@@ -96,12 +96,12 @@ export default function MyAdsPage({
         <div className="table-heading">
           <h2>
             {status === "active"
-              ? "Actieve advertenties"
+              ? "Active listings"
               : status === "sold"
-                ? "Verkocht"
-                : "Concepten"}
+                ? "Sold"
+                : "Drafts"}
           </h2>
-          <span>{visibleProducts.length} advertenties</span>
+          <span>{visibleProducts.length} listings</span>
         </div>
 
         {visibleProducts.length ? (
@@ -115,13 +115,13 @@ export default function MyAdsPage({
                 }}
               />
               <div className="manage-copy">
-                <span className="condition">{status === "sold" ? "Verkocht" : "Actief"}</span>
+                <span className="condition">{status === "sold" ? "Sold" : "Active"}</span>
                 <h3>{product.title}</h3>
                 <strong>{product.price}</strong>
                 <div className="listing-stats">
-                  <span>Locatie: {product.city}</span>
+                  <span>Location: {product.city}</span>
                   <span>{product.state}</span>
-                  <span>Geplaatst: {product.createdAt || "Vandaag"}</span>
+                  <span>Posted: {product.createdAt || "Today"}</span>
                 </div>
               </div>
               <div className="manage-actions">
@@ -132,14 +132,14 @@ export default function MyAdsPage({
                     setPage("detail");
                   }}
                 >
-                  Bekijken
+                  View
                 </button>
                 <button
                   className="secondary"
                   onClick={() => handleStartEdit(product)}
                   type="button"
                 >
-                  Bewerken
+                  Edit
                 </button>
                 <select
                   value={product.adStatus || "active"}
@@ -159,9 +159,9 @@ export default function MyAdsPage({
                     fontWeight: 600,
                   }}
                 >
-                  <option value="active">Actief</option>
-                  <option value="reserved">Gereserveerd</option>
-                  <option value="sold">Verkocht</option>
+                  <option value="active">Active</option>
+                  <option value="reserved">Reserved</option>
+                  <option value="sold">Sold</option>
                 </select>
                 {onDeleteProduct && (
                   <button
@@ -169,7 +169,7 @@ export default function MyAdsPage({
                     style={{ color: "#d94343" }}
                     onClick={() => onDeleteProduct(product.id)}
                   >
-                    Verwijderen
+                    Delete
                   </button>
                 )}
               </div>
@@ -180,10 +180,10 @@ export default function MyAdsPage({
             <span>
               <Icon name="package" size={34} />
             </span>
-            <h3>Geen advertenties in deze categorie</h3>
-            <p>Plaats een advertentie om spullen een tweede leven te geven.</p>
+            <h3>No listings in this category</h3>
+            <p>Post a listing to give items a second life.</p>
             <button className="primary" onClick={() => setPage("sell")}>
-              Plaats advertentie
+              Post a listing
             </button>
           </div>
         )}
@@ -200,7 +200,7 @@ export default function MyAdsPage({
             >
               <Icon name="close" />
             </button>
-            <span className="eyebrow">Advertentie bewerken</span>
+            <span className="eyebrow">Edit listing</span>
             <h2>{editingProduct.title}</h2>
             <form
               onSubmit={handleSaveEdit}
@@ -215,7 +215,7 @@ export default function MyAdsPage({
                   fontWeight: 600,
                 }}
               >
-                Titel
+                Title
                 <input
                   value={editTitle}
                   onChange={(e) => setEditTitle(e.target.value)}
@@ -237,7 +237,7 @@ export default function MyAdsPage({
                   fontWeight: 600,
                 }}
               >
-                Prijs (€)
+                Price (€)
                 <input
                   type="number"
                   value={editPrice}
@@ -260,7 +260,7 @@ export default function MyAdsPage({
                   fontWeight: 600,
                 }}
               >
-                Staat
+                Condition
                 <select
                   value={editCondition}
                   onChange={(e) => setEditCondition(e.target.value)}
@@ -271,10 +271,10 @@ export default function MyAdsPage({
                     background: "var(--canvas)",
                   }}
                 >
-                  <option value="Zo goed als nieuw">Zo goed als nieuw</option>
-                  <option value="Nieuw">Nieuw</option>
-                  <option value="Goed">Goed</option>
-                  <option value="Gebruikt">Gebruikt</option>
+                  <option value="Like new">Like new</option>
+                  <option value="New">New</option>
+                  <option value="Good">Good</option>
+                  <option value="Used">Used</option>
                 </select>
               </label>
               <label
@@ -286,7 +286,7 @@ export default function MyAdsPage({
                   fontWeight: 600,
                 }}
               >
-                Beschrijving
+                Description
                 <textarea
                   rows={4}
                   value={editDesc}
@@ -312,10 +312,10 @@ export default function MyAdsPage({
                   type="button"
                   onClick={() => setEditingProduct(null)}
                 >
-                  Annuleren
+                  Cancel
                 </button>
                 <button className="primary" type="submit">
-                  Opslaan
+                  Save
                 </button>
               </div>
             </form>

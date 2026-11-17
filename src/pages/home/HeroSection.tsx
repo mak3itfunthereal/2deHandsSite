@@ -15,10 +15,10 @@ export function HeroSection({
     <section className="hero">
       <div className="hero-inner">
         <div className="hero-copy">
-          <span className="eyebrow">Geef het door</span>
-          <h1>Goede spullen verdienen een volgend verhaal.</h1>
+          <span className="eyebrow">Pass it on</span>
+          <h1>Good items deserve another story.</h1>
           <p>
-            Koop en verkoop veilig bij jou in de buurt. Beter voor je portemonnee én de wereld.
+            Buy and sell safely near you. Better for your wallet and the planet.
           </p>
           <form
             className="hero-search"
@@ -30,17 +30,17 @@ export function HeroSection({
           >
             <Icon name="search" size={23} />
             <input
-              aria-label="Zoek naar een tweedehands artikel"
+              aria-label="Search for a second-hand item"
               onChange={(event) => onQueryChange(event.target.value)}
-              placeholder="Product, categorie, plaats…"
+              placeholder="Product, category, city…"
               value={query}
             />
             <button className="primary-button" type="submit">
-              Ontdek
+              Discover
             </button>
           </form>
           <div className="quick-links">
-            <span>Populair:</span>
+            <span>Popular:</span>
             {["Product 1", "Product 2", "Product 3"].map((term) => (
               <button key={term} onClick={() => onQuickSearch(term)} type="button">
                 {term}
@@ -48,10 +48,10 @@ export function HeroSection({
             ))}
           </div>
         </div>
-        <div className="hero-art" aria-label="Tweedehands artikelen">
+        <div className="hero-art" aria-label="Second-hand items">
           <div className="hero-stat">
             <b>42 kg</b>
-            <span>CO₂ bespaard deze week</span>
+            <span>CO₂ saved this week</span>
           </div>
           <div
             style={{
@@ -67,7 +67,7 @@ export function HeroSection({
               fontSize: "14px",
             }}
           >
-            Afbeelding via API
+            Image via API
           </div>
         </div>
       </div>

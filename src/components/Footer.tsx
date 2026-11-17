@@ -8,24 +8,24 @@ export function Footer() {
           <div className="footer-logo">
             <span>b</span>bidzaar
           </div>
-          <p>Geef goede spullen een volgend verhaal.</p>
+          <p>Give good items a new story.</p>
           <div className="newsletter">
-            <input placeholder="Je e-mailadres" />
+            <input placeholder="Your email address" />
             <button>
               <Icon name="send" />
             </button>
           </div>
         </div>
         {[
-          ["Bidzaar", "Over ons", "Duurzaamheid", "Vacatures", "Pers"],
+          ["Bidzaar", "About us", "Sustainability", "Careers", "Press"],
           [
-            "Kopen & verkopen",
-            "Hoe werkt het?",
-            "Kopersbescherming",
-            "Veiligheidstips",
-            "Zakelijk",
+            "Buying & selling",
+            "How it works",
+            "Buyer Protection",
+            "Safety tips",
+            "Business",
           ],
-          ["Hulp", "Helpcentrum", "Contact", "Voorwaarden", "Privacy"],
+          ["Help", "Help center", "Contact", "Terms", "Privacy"],
         ].map((col) => (
           <div key={col[0]}>
             <b>{col[0]}</b>
@@ -39,8 +39,8 @@ export function Footer() {
       </div>
       <div className="footer-bottom shell">
         <span>© {new Date().getFullYear()} Bidzaar</span>
-        <span>Nederland · Nederlands</span>
-        <span>Bewust tweedehands</span>
+        <span>Netherlands · English</span>
+        <span>Conscious second-hand</span>
       </div>
     </footer>
   );

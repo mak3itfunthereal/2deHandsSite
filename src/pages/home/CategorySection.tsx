@@ -13,12 +13,12 @@ export function CategorySection({
     <section className="category-section" id="categorieen">
       <div className="section-heading">
         <div>
-          <span className="eyebrow">Vind jouw volgende vondst</span>
-          <h2>Waar ben je naar op zoek?</h2>
+          <span className="eyebrow">Find your next treasure</span>
+          <h2>What are you looking for?</h2>
         </div>
         {activeCategory && (
           <button className="text-button" onClick={onClearCategory} type="button">
-            Wis selectie
+            Clear selection
           </button>
         )}
       </div>

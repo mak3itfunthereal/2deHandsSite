@@ -7,39 +7,39 @@ import { LocationControls } from "./LocationControls";
 
 export const categoryNavigation = [
   {
-    name: "Alle categorieën",
+    name: "All categories",
     sections: [
-      { title: "Groep 1", items: ["Categorie 1", "Categorie 2", "Categorie 3"] },
-      { title: "Groep 2", items: ["Categorie 4", "Categorie 5", "Categorie 6"] },
-      { title: "Groep 3", items: ["Categorie 7", "Categorie 8"] },
+      { title: "Group 1", items: ["Category 1", "Category 2", "Category 3"] },
+      { title: "Group 2", items: ["Category 4", "Category 5", "Category 6"] },
+      { title: "Group 3", items: ["Category 7", "Category 8"] },
     ],
   },
   {
-    name: "Categorie 1",
+    name: "Category 1",
     sections: [
-      { title: "Selectie 1", items: ["Product 1", "Product 2", "Product 3"] },
-      { title: "Selectie 2", items: ["Subcategorie 1", "Subcategorie 2"] },
+      { title: "Selection 1", items: ["Product 1", "Product 2", "Product 3"] },
+      { title: "Selection 2", items: ["Subcategory 1", "Subcategory 2"] },
     ],
   },
   {
-    name: "Categorie 2",
+    name: "Category 2",
     sections: [
-      { title: "Selectie 1", items: ["Product 4", "Product 5", "Product 6"] },
-      { title: "Selectie 2", items: ["Subcategorie 1", "Subcategorie 2"] },
+      { title: "Selection 1", items: ["Product 4", "Product 5", "Product 6"] },
+      { title: "Selection 2", items: ["Subcategory 1", "Subcategory 2"] },
     ],
   },
   {
-    name: "Categorie 3",
+    name: "Category 3",
     sections: [
-      { title: "Selectie 1", items: ["Product 7", "Product 8"] },
-      { title: "Selectie 2", items: ["Subcategorie 1", "Subcategorie 2"] },
+      { title: "Selection 1", items: ["Product 7", "Product 8"] },
+      { title: "Selection 2", items: ["Subcategory 1", "Subcategory 2"] },
     ],
   },
   {
-    name: "Categorie 4",
+    name: "Category 4",
     sections: [
-      { title: "Selectie 1", items: ["Product 1", "Product 2"] },
-      { title: "Selectie 2", items: ["Subcategorie 1", "Subcategorie 2"] },
+      { title: "Selection 1", items: ["Product 1", "Product 2"] },
+      { title: "Selection 2", items: ["Subcategory 1", "Subcategory 2"] },
     ],
   },
 ];
@@ -206,8 +206,8 @@ export function Header({
           <form className="header-search" style={{ maxWidth: "100%" }} onSubmit={handleSubmitSearch}>
             <Icon name="search" />
             <input
-              aria-label="Zoeken"
-              placeholder="Waar ben je naar op zoek?"
+              aria-label="Search"
+              placeholder="What are you looking for?"
               value={inputQuery}
               onFocus={() => setShowSuggestions(true)}
               onChange={(e) => {
@@ -215,7 +215,7 @@ export function Header({
                 setShowSuggestions(true);
               }}
             />
-            <button type="submit">Zoek</button>
+            <button type="submit">Search</button>
           </form>
 
           {showSuggestions && (inputQuery.trim() ? suggestions.length > 0 : recentSearches.length > 0) && (
@@ -247,7 +247,7 @@ export function Header({
                       fontWeight: 600,
                     }}
                   >
-                    <span>Recente zoekopdrachten</span>
+                    <span>Recent searches</span>
                     <button
                       type="button"
                       onClick={clearAllRecent}
@@ -259,7 +259,7 @@ export function Header({
                         cursor: "pointer",
                       }}
                     >
-                      Alles wissen
+                      Clear all
                     </button>
                   </div>
                   {recentSearches.map((term) => (
@@ -347,8 +347,8 @@ export function Header({
           <div className="location-popover">
             <div className="location-popover-title">
               <div>
-                <b>Zoekgebied</b>
-                <small>Kies waar je advertenties wilt zien</small>
+                <b>Search area</b>
+                <small>Choose where you want to see listings</small>
               </div>
               <button className="icon-btn" onClick={() => setLocationOpen(false)}>
                 <Icon name="close" size={18} />
@@ -365,24 +365,24 @@ export function Header({
           <button
             className="icon-btn theme"
             onClick={() => setDark(!dark)}
-            aria-label="Wissel thema"
+            aria-label="Toggle theme"
           >
             <Icon name={dark ? "sun" : "moon"} />
           </button>
-          <button className="icon-btn" aria-label="Favorieten" onClick={() => setPage("account")}>
+          <button className="icon-btn" aria-label="Favorites" onClick={() => setPage("account")}>
             <Icon name="heart" />
           </button>
           <button
             className="icon-btn badge-wrap"
             onClick={() => setPage("chat")}
-            aria-label="Berichten"
+            aria-label="Messages"
           >
             <Icon name="message" />
             <i>2</i>
           </button>
           <button
             className="icon-btn badge-wrap"
-            aria-label="Meldingen"
+            aria-label="Notifications"
             onClick={() => setNotifications(!notifications)}
           >
             <Icon name="bell" />
@@ -390,7 +390,7 @@ export function Header({
           </button>
           {loggedIn ? (
             <button className="profile-btn" onClick={() => setOpen(!open)}>
-              <span className="avatar" aria-label={`Profielfoto van ${userFullName(user)}`}>
+              <span className="avatar" aria-label={`Profile photo of ${userFullName(user)}`}>
                 {userInitials(user)}
               </span>
               <span className="profile-name">{userFullName(user)}</span>
@@ -398,7 +398,7 @@ export function Header({
             </button>
           ) : (
             <button className="secondary login-header" onClick={() => setPage("login")}>
-              Inloggen
+              Log in
             </button>
           )}
           {loggedIn && open && (
@@ -410,17 +410,17 @@ export function Header({
                   <small>{user.email}</small>
                 </span>
               </div>
-              <button onClick={() => setPage("account")}>Mijn profiel</button>
-              <button onClick={() => setPage("my-ads")}>Mijn advertenties</button>
-              <button onClick={() => setPage("settings")}>Instellingen</button>
+              <button onClick={() => setPage("account")}>My profile</button>
+              <button onClick={() => setPage("my-ads")}>My listings</button>
+              <button onClick={() => setPage("settings")}>Settings</button>
               <hr />
-              <button onClick={onLogout}>Uitloggen</button>
+              <button onClick={onLogout}>Log out</button>
             </div>
           )}
           {notifications && (
             <div className="notification-menu">
               <div>
-                <b>Meldingen</b>
+                <b>Notifications</b>
                 <button onClick={() => setNotifications(false)}>
                   <Icon name="close" size={17} />
                 </button>
@@ -430,8 +430,8 @@ export function Header({
                   <Icon name="message" size={18} />
                 </span>
                 <span>
-                  <b>Nieuw bericht van Verkoper 1</b>
-                  <small>“Het product is nog beschikbaar.” · 2 min</small>
+                  <b>New message from Seller 1</b>
+                  <small>“The item is still available.” · 2 min</small>
                 </span>
               </button>
               <button onClick={() => setPage("detail")}>
@@ -439,8 +439,8 @@ export function Header({
                   <Icon name="heart" size={18} />
                 </span>
                 <span>
-                  <b>Prijs verlaagd</b>
-                  <small>Product 1 is nu € 125 · 1 uur</small>
+                  <b>Price reduced</b>
+                  <small>Product 1 is now €125 · 1 hour</small>
                 </span>
               </button>
               <button onClick={() => setPage("account")}>
@@ -448,25 +448,25 @@ export function Header({
                   <Icon name="package" size={18} />
                 </span>
                 <span>
-                  <b>Je pakket is onderweg</b>
-                  <small>Verwacht morgen tussen 10:00–12:00</small>
+                  <b>Your package is on its way</b>
+                  <small>Expected tomorrow between 10:00–12:00</small>
                 </span>
               </button>
             </div>
           )}
           <button className="primary sell-btn" onClick={() => setPage("sell")}>
             <Icon name="plus" />
-            Plaats advertentie
+            Post a listing
           </button>
         </nav>
         <div className="mobile-actions">
-          <button className="icon-btn" onClick={() => setPage("search")} aria-label="Zoeken">
+          <button className="icon-btn" onClick={() => setPage("search")}           aria-label="Search">
             <Icon name="search" />
           </button>
           <button
             className="icon-btn badge-wrap"
             onClick={() => setNotifications(!notifications)}
-            aria-label="Meldingen"
+            aria-label="Notifications"
           >
             <Icon name="bell" />
             <i>3</i>
@@ -480,7 +480,7 @@ export function Header({
               <button
                 className={index === 0 ? "strong" : ""}
                 onClick={() => {
-                  if (onCategorySelect && category.name !== "Alle categorieën") {
+                  if (onCategorySelect && category.name !== "All categories") {
                     onCategorySelect(category.name);
                   }
                   setPage("search");
@@ -494,11 +494,11 @@ export function Header({
               <div className="category-mega-menu">
                 <div className="mega-menu-heading">
                   <div>
-                    <span>Ontdek</span>
+                    <span>Discover</span>
                     <h3>{category.name}</h3>
                   </div>
                   <button onClick={() => setPage("search")}>
-                    Bekijk alles <Icon name="chevron" size={14} />
+                    View all <Icon name="chevron" size={14} />
                   </button>
                 </div>
                 <div className="mega-menu-columns">

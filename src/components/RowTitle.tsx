@@ -8,7 +8,7 @@ export function RowTitle({ title, sub }: { title: string; sub?: string }) {
         {sub && <p>{sub}</p>}
       </div>
       <button>
-        Bekijk alles <Icon name="chevron" size={16} />
+        View all <Icon name="chevron" size={16} />
       </button>
     </div>
   );

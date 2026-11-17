@@ -14,27 +14,27 @@ export function CookieConsent({ onSave }: { onSave: (preferences: ConsentPrefere
             <Icon name="shield" size={24} />
           </span>
           <div>
-            <span className="eyebrow">Jouw privacy</span>
-            <h2 id="cookie-title">Mogen we je ervaring persoonlijk maken?</h2>
+            <span className="eyebrow">Your privacy</span>
+            <h2 id="cookie-title">Can we personalize your experience?</h2>
           </div>
         </div>
         <p>
-          Met je toestemming gebruiken we cookies voor persoonlijke aanbevelingen en vragen we je
-          browserlocatie om alleen advertenties bij jou in de buurt te tonen.
+          With your permission, we use cookies for personalized recommendations and your browser
+          location to show listings near you.
         </p>
         {details && (
           <div className="cookie-options">
             <label>
               <span>
-                <b>Noodzakelijke cookies</b>
-                <small>Inloggen, veiligheid en basisfuncties</small>
+                <b>Essential cookies</b>
+                <small>Sign-in, security, and basic features</small>
               </span>
               <input type="checkbox" checked disabled />
             </label>
             <label>
               <span>
-                <b>Persoonlijke aanbevelingen</b>
-                <small>Producten gebaseerd op favorieten en gebruik</small>
+                <b>Personalized recommendations</b>
+                <small>Products based on your favorites and activity</small>
               </span>
               <input
                 type="checkbox"
@@ -44,8 +44,8 @@ export function CookieConsent({ onSave }: { onSave: (preferences: ConsentPrefere
             </label>
             <label>
               <span>
-                <b>Locatie gebruiken</b>
-                <small>Vraag eenmalig je locatie en onthoud je zoekgebied</small>
+                <b>Use location</b>
+                <small>Request your location once and remember your search area</small>
               </span>
               <input
                 type="checkbox"
@@ -57,14 +57,14 @@ export function CookieConsent({ onSave }: { onSave: (preferences: ConsentPrefere
         )}
         <div className="cookie-actions">
           <button className="text-button" onClick={() => setDetails(!details)}>
-            {details ? "Verberg voorkeuren" : "Voorkeuren instellen"}
+            {details ? "Hide preferences" : "Set preferences"}
           </button>
           <div>
             <button
               className="secondary"
               onClick={() => onSave({ personalization: false, location: false })}
             >
-              Alleen noodzakelijk
+              Essential only
             </button>
             <button
               className="primary"
@@ -76,12 +76,12 @@ export function CookieConsent({ onSave }: { onSave: (preferences: ConsentPrefere
                 )
               }
             >
-              {details ? "Keuzes opslaan" : "Alles accepteren"}
+              {details ? "Save choices" : "Accept all"}
             </button>
           </div>
         </div>
         <small className="cookie-note">
-          Je kunt je voorkeuren later altijd aanpassen via Instellingen → Privacy.
+          You can change your preferences anytime in Settings → Privacy.
         </small>
       </section>
     </div>
