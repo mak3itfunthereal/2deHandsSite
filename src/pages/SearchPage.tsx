@@ -6,8 +6,7 @@ import {
   CategoryButtons,
   Icon,
   LocationControls,
-  ProductCard,
-  ProductCardSkeleton,
+  ProductGrid,
 } from "../components/ui";
 
 function FilterPanel({
@@ -461,7 +460,8 @@ export default function SearchPage({
 
         <section className="results">
           <div className="results-toolbar">
-            <span>{filteredProducts.length} listings found</span>
+            {/* aria-live: screen readers announce the new count when results change */}
+            <span aria-live="polite">{filteredProducts.length} listings found</span>
             <div>
               <label>
                 Sort by:{" "}
@@ -476,24 +476,17 @@ export default function SearchPage({
           </div>
 
           {isLoading ? (
-            <div className="product-grid">
-              {[1, 2, 3, 4].map((i) => (
-                <ProductCardSkeleton key={i} />
-              ))}
-            </div>
+            <ProductGrid variant="results" loading favorites={favorites} toggle={toggle} />
           ) : filteredProducts.length > 0 ? (
             <>
-              <div className="product-grid">
-                {filteredProducts.slice(0, pageSize).map((p) => (
-                  <ProductCard
-                    key={p.id}
-                    item={p}
-                    onOpen={() => handleCardClick(p.id)}
-                    favorite={favorites.has(p.id)}
-                    toggle={() => toggle(p.id)}
-                  />
-                ))}
-              </div>
+              <ProductGrid
+                variant="results"
+                items={filteredProducts}
+                count={pageSize}
+                onOpenProduct={handleCardClick}
+                favorites={favorites}
+                toggle={toggle}
+              />
               {filteredProducts.length > pageSize && (
                 <div style={{ textAlign: "center", marginTop: "32px" }}>
                   <button
