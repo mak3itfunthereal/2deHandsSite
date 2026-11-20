@@ -54,6 +54,8 @@ export type Product = {
   calculatedDistance?: number;
   adStatus?: "active" | "reserved" | "sold";
   allowsShipping?: boolean;
+  allowsPickup?: boolean;
+  allowsOffers?: boolean;
   allowsProtection?: boolean;
   bids?: Array<{
     id: string;
