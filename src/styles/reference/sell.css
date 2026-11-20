@@ -341,3 +341,179 @@
   margin-top: 9px;
 }
 
+
+/* ---- Sell form improvements (seller story: step-by-step form) ---- */
+.sell-shell h1:focus {
+  outline: none;
+}
+.field-error {
+  color: var(--danger);
+  font-size: 13px;
+  font-weight: 600;
+  margin: 6px 0 0;
+}
+.form-stack [aria-invalid="true"] {
+  border-color: var(--danger) !important;
+}
+.form-stack select {
+  width: 100%;
+  color: var(--ink);
+  font: inherit;
+}
+.form-stack input,
+.form-stack textarea {
+  color: var(--ink);
+  font: inherit;
+}
+
+/* Upload zone */
+.upload-zone {
+  cursor: pointer;
+  text-align: center;
+  padding: 20px;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+.upload-zone:hover,
+.upload-zone:focus-visible,
+.upload-zone.dragging {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  outline: none;
+}
+.upload-zone.full {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Photo thumbnails */
+.photo-preview {
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 0;
+}
+.photo-preview > li {
+  width: 110px;
+  height: 100px;
+  border-radius: 9px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.photo-preview .photo-main-btn {
+  position: absolute;
+  inset: auto 4px 4px;
+  border: 0;
+  border-radius: 4px;
+  padding: 3px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+  font-size: 10px;
+  cursor: pointer;
+}
+.photo-preview .photo-remove-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+  cursor: pointer;
+}
+.photo-preview .photo-main-btn:hover,
+.photo-preview .photo-remove-btn:hover {
+  background: var(--primary);
+}
+
+/* Pickup / shipping choice */
+.delivery-options {
+  border: 0;
+  padding: 0;
+  margin-inline: 0;
+}
+.delivery-options .card-check {
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+.delivery-options .card-check:has(input:checked) {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+.delivery-options input {
+  accent-color: var(--primary);
+}
+
+/* Review step */
+.review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 28px;
+}
+.review-section {
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 13px;
+}
+.review-section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.review-section h2 {
+  margin: 0;
+  font-size: 18px;
+  overflow-wrap: anywhere;
+}
+.review-section p {
+  margin: 6px 0 0;
+  color: var(--muted);
+}
+.review-description {
+  white-space: pre-line;
+  color: var(--ink) !important;
+}
+.review-photos {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  overflow-x: auto;
+}
+.review-photos img {
+  width: 90px;
+  height: 80px;
+  flex: 0 0 auto;
+  border-radius: 8px;
+  object-fit: cover;
+}
+.link-btn {
+  border: 0;
+  background: transparent;
+  color: var(--primary);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 6px 4px;
+}
+.link-btn:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 720px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .photo-preview > li {
+    width: calc(33.333% - 8px);
+    height: 90px;
+  }
+}
