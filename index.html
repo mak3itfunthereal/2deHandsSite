@@ -9,6 +9,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%237c3aed'/%3E%3Ctext x='16' y='23' font-family='sans-serif' font-size='22' font-weight='800' fill='white' text-anchor='middle'%3Eb%3C/text%3E%3C/svg%3E">
     <title>Bidzaar — Buy and sell second-hand, consciously</title>
+    <!-- Set the theme before the page draws, so dark mode does not flash white (AB#521) -->
+    <script>
+      try {
+        var t = localStorage.getItem("bidzaar-theme");
+        if (!t) t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script>
 </head>
 <body>
     <div id="root"></div>

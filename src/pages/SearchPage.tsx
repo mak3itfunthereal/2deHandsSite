@@ -1,7 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
 import type { LocationPreference, Page, Product } from "../types";
 import { categories, distanceBetween, products as defaultProducts } from "../utils/marketplace";
-import { Icon, LocationControls, ProductCard, ProductCardSkeleton } from "../components/ui";
+import { matchesCategory, matchesQuery, searchKey, type SearchCriteria } from "../utils/search";
+import {
+  deleteSavedSearch,
+  getSavedSearches,
+  saveSearch,
+  type SavedSearch,
+} from "../api/savedSearches";
+import {
+  CategoryButtons,
+  Icon,
+  LocationControls,
+  ProductGrid,
+} from "../components/ui";
 
 function FilterPanel({
   onClose,
@@ -41,7 +53,7 @@ function FilterPanel({
       <div className="filter-head">
         <h2>Filters</h2>
         {onClose && (
-          <button className="icon-btn" onClick={onClose} type="button">
+          <button className="icon-btn" onClick={onClose} type="button" aria-label="Close filters">
             <Icon name="close" />
           </button>
         )}
@@ -169,7 +181,10 @@ export default function SearchPage({
 }) {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [sort, setSort] = useState("Most relevant");
-  const [saved, setSaved] = useState(false);
+  // Saved searches for email alerts (AB#523)
+  const [savedSearches, setSavedSearches] = useState<SavedSearch[]>([]);
+  const [savingSearch, setSavingSearch] = useState(false);
+  const [saveMessage, setSaveMessage] = useState("");
   const [query, setQuery] = useState(initialQuery);
   const [category, setCategory] = useState(initialCategory || "");
   const [maxPrice, setMaxPrice] = useState(1000);
@@ -219,17 +234,13 @@ export default function SearchPage({
           return false;
         }
 
-        // Query check
-        if (query.trim()) {
-          const q = query.trim().toLowerCase();
-          const matchTitle = product.title.toLowerCase().includes(q);
-          const matchCat = product.category.toLowerCase().includes(q);
-          const matchCity = product.city.toLowerCase().includes(q);
-          if (!matchTitle && !matchCat && !matchCity) return false;
+        // Query check: every word must appear in title or description (see utils/search.ts)
+        if (!matchesQuery(product, query)) {
+          return false;
         }
 
         // Category check
-        if (category && product.category.toLowerCase() !== category.toLowerCase()) {
+        if (!matchesCategory(product, category)) {
           return false;
         }
 
@@ -266,6 +277,51 @@ export default function SearchPage({
         return 0;
       });
   }, [products, location, query, category, condition, maxPrice, sort, shippingOnly, protectionOnly]);
+
+  // Load the user's saved searches once, so we know if this search is already saved
+  useEffect(() => {
+    getSavedSearches()
+      .then(setSavedSearches)
+      .catch(() => setSavedSearches([]));
+  }, []);
+
+  // The current filters, in the format the backend expects
+  const currentCriteria: SearchCriteria = {
+    query: query.trim(),
+    category,
+    condition,
+    maxPrice: maxPrice < 1000 ? maxPrice : null,
+    shippingOnly,
+    protectionOnly,
+    city: location.city,
+    radius: location.radius,
+  };
+  const currentKey = searchKey(currentCriteria);
+  const currentSaved = savedSearches.find((s) => searchKey(s) === currentKey);
+
+  // Clear the message when the user changes the search
+  useEffect(() => {
+    setSaveMessage("");
+  }, [currentKey]);
+
+  const handleToggleSaveSearch = async () => {
+    setSavingSearch(true);
+    try {
+      if (currentSaved) {
+        await deleteSavedSearch(currentSaved.id);
+        setSavedSearches((list) => list.filter((s) => s.id !== currentSaved.id));
+        setSaveMessage("Email alerts turned off for this search.");
+      } else {
+        const created = await saveSearch(currentCriteria);
+        setSavedSearches((list) => [created, ...list.filter((s) => s.id !== created.id)]);
+        setSaveMessage("Search saved. We'll email you when new matching listings are posted.");
+      }
+    } catch {
+      setSaveMessage("Could not save your search. Please try again.");
+    } finally {
+      setSavingSearch(false);
+    }
+  };
 
   const handleCardClick = (productId: number) => {
     if (onSelectProduct) {
@@ -315,14 +371,49 @@ export default function SearchPage({
           </h1>
         </div>
         <button
-          className={saved ? "secondary saved" : "secondary"}
-          onClick={() => setSaved(!saved)}
+          className={currentSaved ? "secondary saved" : "secondary"}
+          onClick={handleToggleSaveSearch}
+          disabled={savingSearch}
+          aria-pressed={Boolean(currentSaved)}
           type="button"
         >
           <Icon name="bell" />
-          {saved ? "Search saved" : "Save search"}
+          {currentSaved ? "Search saved" : "Save search"}
         </button>
       </div>
+      <p className="save-search-message" role="status">
+        {saveMessage}
+      </p>
+
+      <form
+        className="search-page-form"
+        role="search"
+        onSubmit={(e) => e.preventDefault()}
+      >
+        <label htmlFor="search-page-input" className="sr-only">
+          Search ads
+        </label>
+        <Icon name="search" size={18} />
+        <input
+          id="search-page-input"
+          type="search"
+          placeholder="Search in titles and descriptions"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          autoComplete="off"
+        />
+        {query && (
+          <button type="button" aria-label="Clear search" onClick={() => setQuery("")}>
+            <Icon name="close" size={16} />
+          </button>
+        )}
+      </form>
+
+      <CategoryButtons
+        categories={categories.map((c) => c.name)}
+        selected={category}
+        onSelect={setCategory}
+      />
 
       <div className="chips">
         <span>
@@ -330,32 +421,32 @@ export default function SearchPage({
         </span>
         {category && (
           <span>
-            {category} <button onClick={() => setCategory("")}>×</button>
+            {category}{" "}<button type="button" aria-label="Remove category filter" onClick={() => setCategory("")}>×</button>
           </span>
         )}
         {query && (
           <span>
-            “{query}” <button onClick={() => setQuery("")}>×</button>
+            “{query}”{" "}<button type="button" aria-label="Clear search" onClick={() => setQuery("")}>×</button>
           </span>
         )}
         {condition && (
           <span>
-            {condition} <button onClick={() => setCondition("")}>×</button>
+            {condition}{" "}<button type="button" aria-label="Remove condition filter" onClick={() => setCondition("")}>×</button>
           </span>
         )}
         {maxPrice < 1000 && (
           <span>
-            Up to €{maxPrice} <button onClick={() => setMaxPrice(1000)}>×</button>
+            Up to €{maxPrice}{" "}<button type="button" aria-label="Remove price filter" onClick={() => setMaxPrice(1000)}>×</button>
           </span>
         )}
         {shippingOnly && (
           <span>
-            Shipping available <button onClick={() => setShippingOnly(false)}>×</button>
+            Shipping available{" "}<button type="button" aria-label="Remove shipping filter" onClick={() => setShippingOnly(false)}>×</button>
           </span>
         )}
         {protectionOnly && (
           <span>
-            Buyer Protection <button onClick={() => setProtectionOnly(false)}>×</button>
+            Buyer Protection{" "}<button type="button" aria-label="Remove buyer protection filter" onClick={() => setProtectionOnly(false)}>×</button>
           </span>
         )}
         {(category || query || condition || maxPrice < 1000 || shippingOnly || protectionOnly) && (
@@ -428,7 +519,8 @@ export default function SearchPage({
 
         <section className="results">
           <div className="results-toolbar">
-            <span>{filteredProducts.length} listings found</span>
+            {/* aria-live: screen readers announce the new count when results change */}
+            <span aria-live="polite">{filteredProducts.length} listings found</span>
             <div>
               <label>
                 Sort by:{" "}
@@ -443,24 +535,17 @@ export default function SearchPage({
           </div>
 
           {isLoading ? (
-            <div className="product-grid">
-              {[1, 2, 3, 4].map((i) => (
-                <ProductCardSkeleton key={i} />
-              ))}
-            </div>
+            <ProductGrid variant="results" loading favorites={favorites} toggle={toggle} />
           ) : filteredProducts.length > 0 ? (
             <>
-              <div className="product-grid">
-                {filteredProducts.slice(0, pageSize).map((p) => (
-                  <ProductCard
-                    key={p.id}
-                    item={p}
-                    onOpen={() => handleCardClick(p.id)}
-                    favorite={favorites.has(p.id)}
-                    toggle={() => toggle(p.id)}
-                  />
-                ))}
-              </div>
+              <ProductGrid
+                variant="results"
+                items={filteredProducts}
+                count={pageSize}
+                onOpenProduct={handleCardClick}
+                favorites={favorites}
+                toggle={toggle}
+              />
               {filteredProducts.length > pageSize && (
                 <div style={{ textAlign: "center", marginTop: "32px" }}>
                   <button

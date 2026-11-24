@@ -31,15 +31,10 @@ import SettingsPage from "./pages/SettingsPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import PasswordRecoveryPage from "./pages/PasswordRecoveryPage";
+import { loadFavorites, saveFavorites } from "./api/favorites";
 
 function loadStoredFavorites(): Set<number> {
-  try {
-    const raw = window.localStorage.getItem("bidzaar-favorites");
-    if (raw) return new Set(JSON.parse(raw));
-  } catch {
-    // ignore
-  }
-  return new Set([3]);
+  return new Set(loadFavorites());
 }
 
 function loadStoredTheme(): boolean {
@@ -307,10 +302,7 @@ export default function App() {
   }, [location]);
 
   useEffect(() => {
-    window.localStorage.setItem(
-      "bidzaar-favorites",
-      JSON.stringify(Array.from(favorites)),
-    );
+    saveFavorites(favorites);
   }, [favorites]);
 
   useEffect(() => {
@@ -657,6 +649,7 @@ export default function App() {
           user={user}
           searchQuery={searchQuery}
           onSearch={handleHeaderSearch}
+          favoritesCount={favorites.size}
           onCategorySelect={handleHeaderCategorySelect}
           onLogout={handleLogout}
         />
