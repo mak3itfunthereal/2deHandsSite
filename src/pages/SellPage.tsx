@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { LocationPreference, Page, Product, UserProfile } from "../types";
-import { categories } from "../utils/marketplace";
+import { categories, IMG, userInitials } from "../utils/marketplace";
 import { Icon, Logo } from "../components/ui";
 import { PhotoStep } from "./sell/PhotoStep";
 import {
@@ -134,9 +134,16 @@ export default function SellPage({
       allowsShipping: form.delivery !== "pickup",
     };
 
-    if (!onCreateProduct) {
-      setSubmitError("Posting is not available right now.");
-      return;
+    if (onCreateProduct) {
+      try {
+        const prod = await onCreateProduct(newProductData);
+        setCreatedProduct(prod);
+      } catch (err) {
+        console.error("Error saving listing:", err);
+        setSubmitError("Unable to post your listing. Please try again.");
+        setSubmitting(false);
+        return;
+      }
     }
 
     setSubmitting(true);
@@ -439,6 +446,7 @@ export default function SellPage({
           </div>
         )}
 
+        {submitError && <p role="alert">{submitError}</p>}
         <div className="sell-controls">
           <button
             className="secondary"

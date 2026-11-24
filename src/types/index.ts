@@ -8,7 +8,23 @@ export type Page =
   | "my-ads"
   | "settings"
   | "login"
-  | "register";
+  | "register"
+  | "forgot-password"
+  | "reset-password";
+
+export type Account = {
+  id: number;
+  username: string;
+  email: string;
+  isVerified: boolean;
+  createdAt: string;
+  role: string;
+};
+
+export type AuthSession = {
+  token: string;
+  expiresAt: string;
+};
 
 export type UserProfile = {
   firstName: string;

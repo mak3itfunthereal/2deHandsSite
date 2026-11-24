@@ -1,83 +1,65 @@
 import { useState } from "react";
-import type { Page, UserProfile } from "../types";
+import { rawApiClient } from "../api";
+import { ApiError } from "../api/client";
+import type { Page } from "../types";
 
 export default function RegisterPage({
-  onRegister,
+  onRegistered,
   setPage,
 }: {
-  onRegister: (user: UserProfile) => void;
+  onRegistered: () => void;
   setPage: (page: Page) => void;
 }) {
-  const [form, setForm] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-  });
+  const [form, setForm] = useState({ username: "", email: "", password: "" });
+  const [error, setError] = useState("");
+  const [pending, setPending] = useState(false);
+
+  const submit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setPending(true);
+    setError("");
+    try {
+      await rawApiClient.register(form.username.trim(), form.email.trim(), form.password);
+      onRegistered();
+    } catch (err) {
+      setError(err instanceof ApiError && err.status === 409
+        ? "An account with that email already exists."
+        : err instanceof ApiError && err.status === 400
+          ? "Please check your account details and try again."
+          : "Unable to create your account. Please try again.");
+    } finally {
+      setPending(false);
+    }
+  };
+
   return (
     <main className="login-page">
       <div className="login-card register-card">
-        <span className="login-mark">
-          {form.firstName || form.lastName
-            ? `${form.firstName.charAt(0)}${form.lastName.charAt(0)}`.toUpperCase()
-            : "b"}
-        </span>
+        <span className="login-mark">{form.username.charAt(0).toUpperCase() || "b"}</span>
         <span className="eyebrow">New to Bidzaar</span>
         <h1>Create your account</h1>
-        <p>Enter your details. Your name and initials will appear on your profile.</p>
-        <form
-          onSubmit={(event) => {
-            event.preventDefault();
-            onRegister({
-              firstName: form.firstName.trim(),
-              lastName: form.lastName.trim(),
-              email: form.email.trim(),
-            });
-          }}
-        >
-          <div className="form-grid">
-            <label>
-              First name
-              <input
-                required
-                value={form.firstName}
-                onChange={(event) => setForm({ ...form, firstName: event.target.value })}
-                placeholder="First name"
-              />
-            </label>
-            <label>
-              Last name
-              <input
-                required
-                value={form.lastName}
-                onChange={(event) => setForm({ ...form, lastName: event.target.value })}
-                placeholder="Last name"
-              />
-            </label>
-          </div>
+        <p>Your username will appear on your profile.</p>
+        <form onSubmit={submit}>
+          <label>
+            Username
+            <input required autoComplete="username" value={form.username}
+              onChange={(event) => setForm({ ...form, username: event.target.value })} />
+          </label>
           <label>
             Email address
-            <input
-              type="email"
-              required
-              value={form.email}
+            <input type="email" required autoComplete="email" value={form.email}
               onChange={(event) => setForm({ ...form, email: event.target.value })}
-              placeholder="name@example.com"
-            />
+              placeholder="name@example.com" />
           </label>
           <label>
             Password
-            <input
-              type="password"
-              required
-              minLength={8}
-              value={form.password}
-              onChange={(event) => setForm({ ...form, password: event.target.value })}
-              placeholder="At least 8 characters"
-            />
+            <input type="password" required minLength={8} autoComplete="new-password"
+              value={form.password} onChange={(event) => setForm({ ...form, password: event.target.value })}
+              placeholder="At least 8 characters" />
           </label>
-          <button className="primary" type="submit">
-            Create account
+          {error && <p role="alert">{error}</p>}
+          <button className="primary" type="submit" disabled={pending}>
+            {pending ? "Creating account..." : "Create account"}
           </button>
         </form>
         <p className="register-link">

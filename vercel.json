@@ -3,6 +3,10 @@
     {
       "source": "/api/:path*",
       "destination": "https://eindproject-meld.runasp.net/api/:path*"
+    },
+    {
+      "source": "/reset-password",
+      "destination": "/"
     }
   ]
 }

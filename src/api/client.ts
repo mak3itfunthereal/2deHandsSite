@@ -1,4 +1,4 @@
-import type { Conversation, Product, UserProfile } from "../types";
+import type { Account, AuthSession, Conversation, Product, UserProfile } from "../types";
 
 export class ApiError extends Error {
   readonly status: number;
@@ -22,7 +22,14 @@ export type ProductFilterParams = {
   state?: string;
 };
 
-export function createApiClient(baseUrl: string, fetchRequest: typeof fetch = fetch) {
+export function createApiClient(
+  baseUrl: string,
+  fetchRequest: typeof fetch = fetch,
+  auth: { getToken: () => string | null; onUnauthorized: (token: string) => void } = {
+    getToken: () => null,
+    onUnauthorized: () => {},
+  },
+) {
   const base = baseUrl.replace(/\/+$/, "");
 
   async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
@@ -31,6 +38,16 @@ export function createApiClient(baseUrl: string, fetchRequest: typeof fetch = fe
     }
 
     const headers = new Headers(options.headers);
+    const publicAccountRequest = [
+      "accounts/login",
+      "accounts/register",
+      "accounts/forgot-password",
+      "accounts/reset-password",
+    ].includes(path);
+    const storedToken = publicAccountRequest ? null : auth.getToken();
+    if (storedToken && !headers.has("Authorization")) {
+      headers.set("Authorization", `Bearer ${storedToken}`);
+    }
     if (!headers.has("Accept")) {
       headers.set("Accept", "application/json");
     }
@@ -42,6 +59,10 @@ export function createApiClient(baseUrl: string, fetchRequest: typeof fetch = fe
     const body = await response.text();
 
     if (!response.ok) {
+      const authorization = headers.get("Authorization");
+      if (response.status === 401 && authorization?.startsWith("Bearer ")) {
+        auth.onUnauthorized(authorization.slice("Bearer ".length));
+      }
       throw new ApiError(response.status, body);
     }
 
@@ -58,6 +79,44 @@ export function createApiClient(baseUrl: string, fetchRequest: typeof fetch = fe
 
   return {
     request,
+
+    login: (email: string, password: string) =>
+      request<AuthSession>("accounts/login", {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+      }),
+
+    register: (username: string, email: string, password: string) =>
+      request<Account>("accounts/register", {
+        method: "POST",
+        body: JSON.stringify({ username, email, password }),
+      }),
+
+    getCurrentAccount: async (token: string) => {
+      const account = await request<Account>("accounts/me", {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!account || typeof account.id !== "number" || typeof account.username !== "string" ||
+          typeof account.email !== "string" || typeof account.isVerified !== "boolean" ||
+          typeof account.createdAt !== "string" || !Number.isFinite(Date.parse(account.createdAt)) ||
+          typeof account.role !== "string") {
+        throw new Error("API returned an invalid account.");
+      }
+      return account;
+    },
+
+    forgotPassword: (email: string) =>
+      request<{ message: string }>("accounts/forgot-password", {
+        method: "POST",
+        body: JSON.stringify({ email }),
+      }),
+
+    resetPassword: (token: string, newPassword: string) =>
+      request<{ message: string }>("accounts/reset-password", {
+        method: "POST",
+        body: JSON.stringify({ token, newPassword }),
+      }),
 
     // Products API
     getProducts: (params?: ProductFilterParams) => {

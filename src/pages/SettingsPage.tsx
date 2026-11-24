@@ -40,12 +40,7 @@ export default function SettingsPage({
   const [newsletter, setNewsletter] = useState(false);
 
   // Privacy & security
-  const [twoFactor, setTwoFactor] = useState(false);
   const [phoneVisible, setPhoneVisible] = useState(false);
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordStatus, setPasswordStatus] = useState<string | null>(null);
   const [historyCleared, setHistoryCleared] = useState(false);
 
   // Payments
@@ -101,27 +96,6 @@ export default function SettingsPage({
 
   const handleRemoveAvatar = () => {
     setProfileDraft((prev) => ({ ...prev, avatar: undefined }));
-  };
-
-  const handlePasswordSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!currentPassword) {
-      setPasswordStatus("Enter your current password first.");
-      return;
-    }
-    if (newPassword.length < 8) {
-      setPasswordStatus("Your new password must be at least 8 characters.");
-      return;
-    }
-    if (newPassword !== confirmPassword) {
-      setPasswordStatus("The new passwords do not match.");
-      return;
-    }
-    setPasswordStatus("Password changed successfully!");
-    setCurrentPassword("");
-    setNewPassword("");
-    setConfirmPassword("");
-    setTimeout(() => setPasswordStatus(null), 3500);
   };
 
   const handleClearHistory = () => {
@@ -199,6 +173,7 @@ export default function SettingsPage({
           {/* TAB: PROFILE */}
           {section === "Profile" && (
             <div className="settings-form">
+              <p>Profile edits here are a local preview and are not saved to your account.</p>
               <div className="avatar-setting">
                 {profileDraft.avatar ? (
                   <img
@@ -354,17 +329,10 @@ export default function SettingsPage({
                 <label>
                   <span className="pref-text">
                     <b>Two-factor authentication (2FA)</b>
-                    <small>Add an extra layer of security with an SMS or authenticator code</small>
+                    <small>Two-factor authentication is not available yet.</small>
                   </span>
                   <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                    <span className={`badge ${twoFactor ? "badge-success" : "badge-muted"}`}>
-                      {twoFactor ? "Active" : "Inactive"}
-                    </span>
-                    <input
-                      type="checkbox"
-                      checked={twoFactor}
-                      onChange={(e) => setTwoFactor(e.target.checked)}
-                    />
+                    <span className="badge badge-muted">Unavailable</span>
                   </div>
                 </label>
 
@@ -382,74 +350,12 @@ export default function SettingsPage({
               </div>
 
               <h3 className="settings-section-title">Change password</h3>
-              <form onSubmit={handlePasswordSubmit} className="sub-card">
-                <label style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                  <span style={{ fontSize: "13px", fontWeight: 600 }}>Current password</span>
-                  <input
-                    type="password"
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                    placeholder="••••••••"
-                    style={{
-                      border: "1px solid var(--line)",
-                      background: "var(--surface)",
-                      borderRadius: "8px",
-                      padding: "10px 12px",
-                      color: "var(--ink)",
-                    }}
-                  />
-                </label>
-                <div className="form-grid">
-                  <label style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                    <span style={{ fontSize: "13px", fontWeight: 600 }}>New password</span>
-                    <input
-                      type="password"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      placeholder="At least 8 characters"
-                      style={{
-                        border: "1px solid var(--line)",
-                        background: "var(--surface)",
-                        borderRadius: "8px",
-                        padding: "10px 12px",
-                        color: "var(--ink)",
-                      }}
-                    />
-                  </label>
-                  <label style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                    <span style={{ fontSize: "13px", fontWeight: 600 }}>Confirm new password</span>
-                    <input
-                      type="password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      placeholder="Repeat new password"
-                      style={{
-                        border: "1px solid var(--line)",
-                        background: "var(--surface)",
-                        borderRadius: "8px",
-                        padding: "10px 12px",
-                        color: "var(--ink)",
-                      }}
-                    />
-                  </label>
-                </div>
-                {passwordStatus && (
-                  <p
-                    style={{
-                      fontSize: "13px",
-                      color: passwordStatus.includes("successfully") ? "#16a34a" : "#dc2626",
-                      margin: "4px 0",
-                    }}
-                  >
-                    {passwordStatus}
-                  </p>
-                )}
-                <div>
-                  <button className="secondary" type="submit">
-                    Update password
-                  </button>
-                </div>
-              </form>
+              <div className="sub-card">
+                <p>Request a password reset link to change your password.</p>
+                <button className="secondary" type="button" onClick={() => setPage("forgot-password")}>
+                  Request reset link
+                </button>
+              </div>
 
               <h3 className="settings-section-title">Data & privacy</h3>
               <div className="sub-card">
@@ -480,7 +386,7 @@ export default function SettingsPage({
                   <div>
                     <b style={{ fontSize: "14px", display: "block" }}>Close account</b>
                     <p style={{ margin: "4px 0 0", color: "var(--muted)", fontSize: "13px" }}>
-                      Close your account and delete your personal data in accordance with privacy law (GDPR).
+                      Account deletion is not available yet.
                     </p>
                   </div>
                   {onDeleteAccount && (
@@ -679,7 +585,7 @@ export default function SettingsPage({
           <div className="settings-save">
             {saved && (
               <span>
-                <Icon name="check" size={17} /> Changes saved successfully!
+                <Icon name="check" size={17} /> Local changes applied; account details are not saved to the server.
               </span>
             )}
             <button className="primary" onClick={save} type="button">
