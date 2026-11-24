@@ -134,17 +134,7 @@ export default function SellPage({
       allowsShipping: form.delivery !== "pickup",
     };
 
-    if (onCreateProduct) {
-      try {
-        const prod = await onCreateProduct(newProductData);
-        setCreatedProduct(prod);
-      } catch (err) {
-        console.error("Error saving listing:", err);
-        setSubmitError("Unable to post your listing. Please try again.");
-        setSubmitting(false);
-        return;
-      }
-    }
+    if (!onCreateProduct) return;
 
     setSubmitting(true);
     setSubmitError("");
