@@ -35,6 +35,9 @@ export function CategorySection({
               <img
                 alt=""
                 loading="lazy"
+                decoding="async"
+                width={64}
+                height={64}
                 src={category.image}
                 onError={(e) => {
                   e.currentTarget.src = GRAY_IMAGE;

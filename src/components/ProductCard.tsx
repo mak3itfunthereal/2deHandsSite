@@ -22,6 +22,9 @@ export function ProductCard({
           src={item.image}
           alt={item.title}
           loading="lazy"
+          decoding="async"
+          width={400}
+          height={300}
           onError={(e) => {
             e.currentTarget.src = FALLBACK_IMAGE;
           }}

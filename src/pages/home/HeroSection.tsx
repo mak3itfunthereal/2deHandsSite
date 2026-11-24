@@ -1,4 +1,5 @@
 import { Icon } from "../../components/Icon";
+import { HERO_IMAGE_API, FALLBACK_IMAGE } from "../../api/images";
 
 export function HeroSection({
   query,
@@ -53,22 +54,25 @@ export function HeroSection({
             <b>42 kg</b>
             <span>CO₂ saved this week</span>
           </div>
-          <div
+          <img
+            src={HERO_IMAGE_API}
+            alt="Second-hand items marketplace preview"
+            width={480}
+            height={360}
+            decoding="async"
+            fetchPriority="high"
+            onError={(e) => {
+              e.currentTarget.src = FALLBACK_IMAGE;
+            }}
             style={{
               width: "100%",
               height: "100%",
               borderRadius: "36px",
-              backgroundColor: "var(--line)",
+              objectFit: "cover",
               boxShadow: "var(--shadow)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "var(--muted)",
-              fontSize: "14px",
+              display: "block",
             }}
-          >
-            Image via API
-          </div>
+          />
         </div>
       </div>
     </section>

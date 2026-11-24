@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/health",
+      "destination": "https://eindproject-meld.runasp.net/health"
+    },
+    {
       "source": "/api/:path*",
       "destination": "https://eindproject-meld.runasp.net/api/:path*"
     }

@@ -12,7 +12,7 @@ export function TrustSection() {
         <span className="eyebrow">Trade with confidence</span>
         <h2>Pay safely. We protect your purchase.</h2>
         <p>Your money is only released once your order has arrived safely.</p>
-        <a className="text-button" href="#veilig-kopen">
+        <a className="text-button" href="#/search">
           How Buyer Protection works <Icon name="arrow" size={17} />
         </a>
       </div>

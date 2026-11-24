@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import type {
   ConsentPreferences,
   Conversation,
@@ -18,15 +18,15 @@ import {
 import { CookieConsent, Footer, Header, Icon, MobileNav } from "./components/ui";
 import { api } from "./api";
 import HomePage from "./pages/HomePage";
-import SearchPage from "./pages/SearchPage";
-import DetailPage from "./pages/DetailPage";
-import ChatPage from "./pages/ChatPage";
-import SellPage from "./pages/SellPage";
-import AccountPage from "./pages/AccountPage";
-import MyAdsPage from "./pages/MyAdsPage";
-import SettingsPage from "./pages/SettingsPage";
-import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage";
+const SearchPage = lazy(() => import("./pages/SearchPage"));
+const DetailPage = lazy(() => import("./pages/DetailPage"));
+const ChatPage = lazy(() => import("./pages/ChatPage"));
+const SellPage = lazy(() => import("./pages/SellPage"));
+const AccountPage = lazy(() => import("./pages/AccountPage"));
+const MyAdsPage = lazy(() => import("./pages/MyAdsPage"));
+const SettingsPage = lazy(() => import("./pages/SettingsPage"));
+const LoginPage = lazy(() => import("./pages/LoginPage"));
+const RegisterPage = lazy(() => import("./pages/RegisterPage"));
 import { loadFavorites, saveFavorites } from "./api/favorites";
 
 function loadStoredFavorites(): Set<number> {
@@ -528,7 +528,18 @@ export default function App() {
           }}
         />
       )}
-      {content}
+      <Suspense
+        fallback={
+          <div className="shell page-loading" style={{ padding: "40px 0", minHeight: "50vh" }}>
+            <div
+              className="skeleton-image skeleton-shimmer"
+              style={{ maxWidth: "800px", margin: "0 auto", height: "180px", borderRadius: "16px" }}
+            />
+          </div>
+        }
+      >
+        {content}
+      </Suspense>
       {page === "home" && <Footer />}
       {page !== "sell" && (
         <MobileNav page={page} setPage={setPage} loggedIn={loggedIn} user={user} />

@@ -159,6 +159,10 @@ export default function DetailPage({
             <img
               src={currentImage}
               alt={product.title}
+              width={640}
+              height={480}
+              decoding="async"
+              fetchPriority="high"
               onError={(e) => {
                 e.currentTarget.src = FALLBACK_IMAGE;
               }}
@@ -179,6 +183,10 @@ export default function DetailPage({
                   <img
                     src={imgSrc}
                     alt=""
+                    width={80}
+                    height={60}
+                    loading="lazy"
+                    decoding="async"
                     onError={(e) => {
                       e.currentTarget.src = FALLBACK_IMAGE;
                     }}

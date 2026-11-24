@@ -59,6 +59,17 @@ export function createApiClient(baseUrl: string, fetchRequest: typeof fetch = fe
   return {
     request,
 
+    // Health Check / System Status API
+    checkHealth: () =>
+      request<{
+        status: string;
+        server?: string;
+        timestamp?: string;
+        uptime?: string;
+        version?: string;
+        checks?: Array<{ name: string; status: string }>;
+      }>("health", { method: "GET" }),
+
     // Products API
     getProducts: (params?: ProductFilterParams) => {
       const search = new URLSearchParams();
