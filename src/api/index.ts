@@ -1,14 +1,22 @@
-import { createApiClient, type ProductFilterParams } from "./client";
+import { ApiError, createApiClient, type ProductFilterParams } from "./client";
 import type { Conversation, Product, UserProfile } from "../types";
 import { initialConversations, products as defaultProducts } from "../utils/mockData";
 import { defaultUser } from "../utils/mockData";
+import { getStoredSession } from "./session";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
-export const rawApiClient = createApiClient(API_BASE_URL || "/api");
+export const rawApiClient = createApiClient(API_BASE_URL || "/api", fetch, {
+  getToken: () => getStoredSession()?.token ?? null,
+  onUnauthorized: (token) => window.dispatchEvent(new CustomEvent("bidzaar-unauthorized", { detail: token })),
+});
 
 // LocalStorage helpers for seamless offline/fallback development
 const PRODUCTS_KEY = "bidzaar-products-cache";
 const CONVERSATIONS_KEY = "bidzaar-conversations-cache";
+
+function rethrowAuthorizationError(error: unknown) {
+  if (error instanceof ApiError && (error.status === 401 || error.status === 403)) throw error;
+}
 
 function getLocalProducts(): Product[] {
   try {
@@ -58,6 +66,7 @@ export const api = {
       try {
         return await rawApiClient.getProducts(params);
       } catch (err) {
+        rethrowAuthorizationError(err);
         console.warn("Backend API unavailable, falling back to local data:", err);
       }
     }
@@ -92,6 +101,7 @@ export const api = {
       try {
         return await rawApiClient.getProductById(id);
       } catch (err) {
+        rethrowAuthorizationError(err);
         console.warn(`Backend API getProductById(${id}) failed, checking local cache:`, err);
       }
     }
@@ -104,6 +114,7 @@ export const api = {
       try {
         return await rawApiClient.createProduct(newProductData);
       } catch (err) {
+        rethrowAuthorizationError(err);
         console.warn("Backend API createProduct failed, saving to local store:", err);
       }
     }
@@ -128,6 +139,7 @@ export const api = {
         const res = await rawApiClient.deleteProduct(id);
         return res.success;
       } catch (err) {
+        rethrowAuthorizationError(err);
         console.warn(`Backend API deleteProduct(${id}) failed:`, err);
       }
     }
@@ -143,6 +155,7 @@ export const api = {
       try {
         return await rawApiClient.getConversations();
       } catch (err) {
+        rethrowAuthorizationError(err);
         console.warn("Backend API getConversations failed, using local conversations:", err);
       }
     }
@@ -158,6 +171,7 @@ export const api = {
       try {
         return await rawApiClient.sendMessage(conversationId, { text, sender });
       } catch (err) {
+        rethrowAuthorizationError(err);
         console.warn("Backend API sendMessage failed, using local store:", err);
       }
     }
@@ -216,6 +230,7 @@ export const api = {
       try {
         return await rawApiClient.getUserProfile();
       } catch (err) {
+        rethrowAuthorizationError(err);
         console.warn("Backend API getUserProfile failed:", err);
       }
     }

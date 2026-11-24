@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { LocationPreference, Page, Product, UserProfile } from "../types";
+import type { Account, LocationPreference, Page, Product, UserProfile } from "../types";
 import { products as defaultProducts, userFullName, userInitials } from "../utils/marketplace";
 import { Icon, ProductGrid } from "../components/ui";
 
@@ -8,6 +8,7 @@ export default function AccountPage({
   favorites,
   toggle,
   user,
+  account,
   location,
   products = defaultProducts,
   onSelectProduct,
@@ -16,6 +17,7 @@ export default function AccountPage({
   favorites: Set<number>;
   toggle: (id: number) => void;
   user: UserProfile;
+  account: Account | null;
   location?: LocationPreference;
   products?: Product[];
   onSelectProduct?: (productId: number) => void;
@@ -35,10 +37,11 @@ export default function AccountPage({
           <div>
             <h1>{userFullName(user)}</h1>
             <p>
-              <Icon name="pin" size={15} /> {location?.city || "City 1"} · Member since 2024
+              <Icon name="pin" size={15} /> {location?.city || "City 1"}
+              {account && ` · Member since ${new Date(account.createdAt).getFullYear()}`}
             </p>
             <span className="verified">
-              <Icon name="check" size={13} /> Email and phone verified
+              <Icon name="check" size={13} /> {account?.isVerified ? "Account verified" : "Account not verified"}
             </span>
           </div>
           <button className="secondary" onClick={() => setPage("settings")}>

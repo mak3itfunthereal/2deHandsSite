@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import type {
   ConsentPreferences,
+  Account,
+  AuthSession,
   Conversation,
   LocationPreference,
   Page,
@@ -11,12 +13,13 @@ import {
   distanceBetween,
   initialConversations,
   loadStoredLocation,
-  loadStoredUser,
   locations,
   products as defaultProducts,
 } from "./utils/marketplace";
 import { CookieConsent, Footer, Header, Icon, MobileNav } from "./components/ui";
-import { api } from "./api";
+import { api, rawApiClient } from "./api";
+import { ApiError } from "./api/client";
+import { clearSession, getStoredSession, saveSession, SESSION_KEY } from "./api/session";
 import HomePage from "./pages/HomePage";
 import SearchPage from "./pages/SearchPage";
 import DetailPage from "./pages/DetailPage";
@@ -27,6 +30,7 @@ import MyAdsPage from "./pages/MyAdsPage";
 import SettingsPage from "./pages/SettingsPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import PasswordRecoveryPage from "./pages/PasswordRecoveryPage";
 
 function loadStoredFavorites(): Set<number> {
   try {
@@ -55,6 +59,7 @@ function parseHash(): {
   category?: string;
   convId?: string;
 } {
+  if (window.location.pathname === "/reset-password") return { page: "reset-password" };
   const hash = window.location.hash.replace(/^#\/?/, "");
   if (!hash) return { page: "home" };
 
@@ -83,6 +88,8 @@ function parseHash(): {
     "settings",
     "login",
     "register",
+    "forgot-password",
+    "reset-password",
   ];
   const matched = validPages.find((p) => p === path);
   return {
@@ -112,21 +119,111 @@ export default function App() {
     useState<Conversation[]>(initialConversations);
 
   const [dark, setDark] = useState<boolean>(loadStoredTheme);
-  const [loggedIn, setLoggedIn] = useState(
-    () => window.localStorage.getItem("bidzaar-auth") !== "false",
-  );
-  const [user, setUser] = useState<UserProfile>(loadStoredUser);
+  const [session, setSession] = useState<AuthSession | null>(getStoredSession);
+  const [account, setAccount] = useState<Account | null>(null);
+  const [authLoading, setAuthLoading] = useState(() => session !== null);
+  const [authError, setAuthError] = useState("");
+  const [user, setUser] = useState<UserProfile>({ firstName: "", lastName: "", email: "" });
+  const [resetToken, setResetToken] = useState<string | null>(() => {
+    if (window.location.pathname === "/reset-password") {
+      return new URLSearchParams(window.location.search).get("token");
+    }
+    return typeof window.history.state?.resetToken === "string" ? window.history.state.resetToken : null;
+  });
   const [location, setLocation] = useState<LocationPreference>(loadStoredLocation);
   const [favorites, setFavorites] = useState<Set<number>>(loadStoredFavorites);
   const [notice, setNotice] = useState("");
   const [showConsent, setShowConsent] = useState(
     () => !document.cookie.includes("bidzaar_cookie_consent="),
   );
+  const loggedIn = account !== null && session !== null && !authLoading;
+
+  useEffect(() => {
+    window.localStorage.removeItem("bidzaar-auth");
+    window.localStorage.removeItem("bidzaar-user");
+    if (window.location.pathname === "/reset-password") {
+      window.history.replaceState({ resetToken }, "", "/#/reset-password");
+    }
+  }, [resetToken]);
+
+  useEffect(() => {
+    if (!session) {
+      setAccount(null);
+      setAuthLoading(false);
+      return;
+    }
+    let active = true;
+    setAuthLoading(true);
+    setAuthError("");
+    rawApiClient.getCurrentAccount(session.token).then((current) => {
+      if (!active) return;
+      setAccount(current);
+      setUser({ firstName: current.username, lastName: "", email: current.email });
+      setAuthLoading(false);
+    }).catch((err: unknown) => {
+      if (!active) return;
+      setAccount(null);
+      setAuthLoading(false);
+      if (err instanceof ApiError && err.status === 401) {
+        const stored = getStoredSession();
+        if (stored && stored.token !== session.token) {
+          setSession(stored);
+        } else {
+          clearSession();
+          setSession(null);
+          setAuthError("Your session has expired. Please log in again.");
+        }
+      } else {
+        setAuthError("Unable to verify your session. Check your connection and reload the page.");
+      }
+    });
+    const remaining = Date.parse(session.expiresAt) - Date.now();
+    const timer = window.setTimeout(() => {
+      const stored = getStoredSession();
+      if (stored && stored.token !== session.token) {
+        setSession(stored);
+      } else {
+        clearSession();
+        setSession(null);
+        setAuthError("Your session has expired. Please log in again.");
+      }
+    }, Math.max(0, Math.min(remaining, 2147483647)));
+    return () => {
+      active = false;
+      window.clearTimeout(timer);
+    };
+  }, [session]);
+
+  useEffect(() => {
+    const handleUnauthorized = (event: Event) => {
+      if (event instanceof CustomEvent && session?.token === event.detail &&
+          getStoredSession()?.token === event.detail) {
+        clearSession();
+        setSession(null);
+        setAuthError("Your session has expired. Please log in again.");
+      }
+    };
+    window.addEventListener("bidzaar-unauthorized", handleUnauthorized);
+    return () => window.removeEventListener("bidzaar-unauthorized", handleUnauthorized);
+  }, [session]);
+
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === SESSION_KEY || event.key === null) {
+        const stored = getStoredSession();
+        setAccount(null);
+        setAuthLoading(stored !== null);
+        setSession(stored);
+      }
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
 
   // Fetch initial data from API / Local Storage cache
   useEffect(() => {
-    void api.getProducts().then(setProductsList);
-    void api.getConversations().then(setConversationsList);
+    void api.getProducts().then(setProductsList).catch(() => setNotice("Unable to load listings."));
+    void api.getConversations().then(setConversationsList).catch(() => setNotice("Unable to load conversations."));
   }, []);
 
   // Sync hash routing with browser history (back/forward support)
@@ -199,13 +296,11 @@ export default function App() {
       settings: "Settings — Bidzaar",
       login: "Log in — Bidzaar",
       register: "Create an account — Bidzaar",
+      "forgot-password": "Forgot password — Bidzaar",
+      "reset-password": "Reset password — Bidzaar",
     };
     document.title = titles[page] || "Bidzaar";
   }, [page, searchQuery, selectedCategory, selectedProductId, productsList]);
-
-  useEffect(() => {
-    window.localStorage.setItem("bidzaar-user", JSON.stringify(user));
-  }, [user]);
 
   useEffect(() => {
     window.localStorage.setItem("bidzaar-location", JSON.stringify(location));
@@ -280,9 +375,13 @@ export default function App() {
   };
 
   const handleDeleteProduct = async (id: number) => {
-    await api.deleteProduct(id);
-    setProductsList((prev) => prev.filter((p) => p.id !== id));
-    setNotice("Listing deleted.");
+    try {
+      await api.deleteProduct(id);
+      setProductsList((prev) => prev.filter((p) => p.id !== id));
+      setNotice("Listing deleted.");
+    } catch {
+      setNotice("Unable to delete the listing.");
+    }
   };
 
   const handleUpdateProduct = (updated: Product) => {
@@ -332,20 +431,32 @@ export default function App() {
   };
 
   const handleStartChat = async (product: Product, initialMsg?: string) => {
-    const conversation = await api.startOrGetConversation(product);
-    if (initialMsg) {
-      await api.sendMessage(conversation.id, initialMsg, "me");
+    if (!loggedIn) {
+      setPage("login");
+      return;
     }
-    const allConvs = await api.getConversations();
-    setConversationsList(allConvs);
-    setActiveConversationId(conversation.id);
-    setPage("chat", { convId: conversation.id });
+    try {
+      const conversation = await api.startOrGetConversation(product);
+      if (initialMsg) {
+        await api.sendMessage(conversation.id, initialMsg, "me");
+      }
+      const allConvs = await api.getConversations();
+      setConversationsList(allConvs);
+      setActiveConversationId(conversation.id);
+      setPage("chat", { convId: conversation.id });
+    } catch {
+      setNotice("Unable to start the conversation.");
+    }
   };
 
   const handleSendMessage = async (convId: string, text: string) => {
-    await api.sendMessage(convId, text, "me");
-    const updated = await api.getConversations();
-    setConversationsList(updated);
+    try {
+      await api.sendMessage(convId, text, "me");
+      const updated = await api.getConversations();
+      setConversationsList(updated);
+    } catch {
+      setNotice("Unable to send the message.");
+    }
   };
 
   const handleSelectProduct = (productId: number) => {
@@ -364,7 +475,37 @@ export default function App() {
     setPage("search", { category, query: "" });
   };
 
+  const handleLogout = () => {
+    clearSession();
+    setSession(null);
+    setAccount(null);
+    setUser({ firstName: "", lastName: "", email: "" });
+    setAuthError("");
+    setPage("home");
+    setNotice("You have been logged out.");
+  };
+
+  const handleLogin = async (email: string, password: string) => {
+    const nextSession = await rawApiClient.login(email, password);
+    const current = await rawApiClient.getCurrentAccount(nextSession.token);
+    saveSession(nextSession);
+    setUser({ firstName: current.username, lastName: "", email: current.email });
+    setAccount(current);
+    setAuthError("");
+    setSession(nextSession);
+    setPage("account");
+  };
+
   const content = useMemo(() => {
+    if (["account", "settings", "my-ads", "sell", "chat"].includes(page) && !loggedIn) {
+      if (authLoading) return <main className="shell"><p>Checking your session...</p></main>;
+      return (
+        <>
+          {authError && <p role="alert" className="shell">{authError}</p>}
+          <LoginPage onLogin={handleLogin} setPage={setPage} />
+        </>
+      );
+    }
     if (page === "search")
       return (
         <SearchPage
@@ -435,30 +576,13 @@ export default function App() {
           onLocationChange={setLocation}
           dark={dark}
           setDark={setDark}
-          onLogout={() => {
-            setLoggedIn(false);
-            window.localStorage.setItem("bidzaar-auth", "false");
-            setPage("home");
-            setNotice("You have been logged out securely.");
-          }}
-          onDeleteAccount={() => {
-            setLoggedIn(false);
-            window.localStorage.removeItem("bidzaar-auth");
-            window.localStorage.removeItem("bidzaar-user");
-            setPage("home");
-            setNotice("Your account and listings have been deleted.");
-          }}
+          onLogout={handleLogout}
         />
       );
     if (page === "login")
       return (
         <LoginPage
-          onLogin={() => {
-            setLoggedIn(true);
-            window.localStorage.setItem("bidzaar-auth", "true");
-            setPage("account");
-            setNotice("You are logged in again.");
-          }}
+          onLogin={handleLogin}
           setPage={setPage}
         />
       );
@@ -466,16 +590,18 @@ export default function App() {
       return (
         <RegisterPage
           setPage={setPage}
-          onRegister={(newUser) => {
-            setUser(newUser);
-            setLoggedIn(true);
-            window.localStorage.setItem("bidzaar-user", JSON.stringify(newUser));
-            window.localStorage.setItem("bidzaar-auth", "true");
-            setPage("account");
-            setNotice(`Welcome, ${newUser.firstName}! Your account has been created.`);
+          onRegistered={() => {
+            setPage("login");
+            setNotice("Account created. Please log in.");
           }}
         />
       );
+    if (page === "forgot-password" || page === "reset-password")
+      return <PasswordRecoveryPage key={page} reset={page === "reset-password"} token={resetToken}
+        onResetComplete={() => {
+          setResetToken(null);
+          window.history.replaceState(null, "", window.location.href);
+        }} setPage={setPage} />;
     if (page === "account")
       return (
         <AccountPage
@@ -483,6 +609,7 @@ export default function App() {
           favorites={favorites}
           toggle={toggle}
           user={user}
+          account={account}
           location={location}
           products={productsList}
           onSelectProduct={handleSelectProduct}
@@ -504,6 +631,10 @@ export default function App() {
     location,
     user,
     loggedIn,
+    authLoading,
+    authError,
+    account,
+    resetToken,
     productsList,
     conversationsList,
     selectedProductId,
@@ -527,12 +658,7 @@ export default function App() {
           searchQuery={searchQuery}
           onSearch={handleHeaderSearch}
           onCategorySelect={handleHeaderCategorySelect}
-          onLogout={() => {
-            setLoggedIn(false);
-            window.localStorage.setItem("bidzaar-auth", "false");
-            setPage("home");
-            setNotice("You have been logged out securely.");
-          }}
+          onLogout={handleLogout}
         />
       )}
       {content}

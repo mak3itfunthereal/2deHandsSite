@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { LocationPreference, Page, Product, UserProfile } from "../types";
-import { categories, IMG } from "../utils/marketplace";
+import { categories, IMG, userInitials } from "../utils/marketplace";
 import { Icon, Logo } from "../components/ui";
 
 export default function SellPage({
@@ -19,6 +19,7 @@ export default function SellPage({
   const [step, setStep] = useState(1);
   const [done, setDone] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const [createdProduct, setCreatedProduct] = useState<Product | null>(null);
 
   // Form states
@@ -45,6 +46,7 @@ export default function SellPage({
 
   const handleFinish = async () => {
     setSubmitting(true);
+    setSubmitError("");
     const newProductData: Omit<Product, "id"> = {
       title: title.trim() || "Second-hand item",
       price: `€ ${price.trim()}`,
@@ -59,7 +61,7 @@ export default function SellPage({
       lat: location?.lat || 52.0907,
       lon: location?.lon || 5.1214,
       sellerName: user ? `${user.firstName} ${user.lastName}` : "You",
-      sellerInitials: user ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase() : "ME",
+      sellerInitials: user ? userInitials(user) : "ME",
       sellerVerified: true,
       createdAt: "Just now",
       isUserAd: true,
@@ -71,6 +73,9 @@ export default function SellPage({
         setCreatedProduct(prod);
       } catch (err) {
         console.error("Error saving listing:", err);
+        setSubmitError("Unable to post your listing. Please try again.");
+        setSubmitting(false);
+        return;
       }
     }
     setSubmitting(false);
@@ -331,6 +336,7 @@ export default function SellPage({
           </div>
         )}
 
+        {submitError && <p role="alert">{submitError}</p>}
         <div className="sell-controls">
           <button
             className="secondary"
