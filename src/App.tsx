@@ -128,6 +128,8 @@ export default function App() {
   const [location, setLocation] = useState<LocationPreference>(loadStoredLocation);
   const [favorites, setFavorites] = useState<Set<number>>(loadStoredFavorites);
   const [notice, setNotice] = useState("");
+  // Draft the seller wants to continue (set from My listings > Drafts)
+  const [draftToResume, setDraftToResume] = useState<string | null>(null);
   const [showConsent, setShowConsent] = useState(
     () => !document.cookie.includes("bidzaar_cookie_consent="),
   );
@@ -376,19 +378,23 @@ export default function App() {
     }
   };
 
-  const handleUpdateProduct = (updated: Product) => {
+  const handleUpdateProduct = async (updated: Product) => {
+    const saved = await api.updateProduct(updated);
     setProductsList((prev) =>
-      prev.map((p) => (p.id === updated.id ? updated : p)),
+      prev.map((p) => (p.id === saved.id ? saved : p)),
     );
     setNotice("Listing updated successfully.");
   };
 
-  const handleProductStatusChange = (
+  const handleProductStatusChange = async (
     productId: number,
     status: "active" | "reserved" | "sold",
   ) => {
+    const product = productsList.find((p) => p.id === productId);
+    if (!product) return;
+    const saved = await api.updateProduct({ ...product, adStatus: status });
     setProductsList((prev) =>
-      prev.map((p) => (p.id === productId ? { ...p, adStatus: status } : p)),
+      prev.map((p) => (p.id === productId ? saved : p)),
     );
     setNotice(
       status === "sold"
@@ -545,6 +551,8 @@ export default function App() {
           user={user}
           onCreateProduct={handleCreateProduct}
           onSelectProduct={handleSelectProduct}
+          draftId={draftToResume}
+          key={draftToResume ?? "new"}
         />
       );
     if (page === "my-ads")
@@ -556,6 +564,10 @@ export default function App() {
           onDeleteProduct={handleDeleteProduct}
           onUpdateProduct={handleUpdateProduct}
           onStatusChange={handleProductStatusChange}
+          onResumeDraft={(id) => {
+            setDraftToResume(id);
+            setPage("sell");
+          }}
         />
       );
     if (page === "settings")
@@ -633,7 +645,13 @@ export default function App() {
     searchQuery,
     selectedCategory,
     activeConversationId,
+    draftToResume,
   ]);
+
+  // Forget the draft when the seller leaves the sell page
+  useEffect(() => {
+    if (page !== "sell") setDraftToResume(null);
+  }, [page]);
 
   return (
     <div className="app">

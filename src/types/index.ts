@@ -72,6 +72,10 @@ export type Product = {
   allowsShipping?: boolean;
   allowsPickup?: boolean;
   allowsOffers?: boolean;
+  /** How many times the ad was viewed (comes from the backend) */
+  views?: number;
+  /** How many users saved this ad as favorite (comes from the backend) */
+  favoritesCount?: number;
   allowsProtection?: boolean;
   bids?: Array<{
     id: string;

@@ -3,6 +3,7 @@ import type { LocationPreference, Page, Product, UserProfile } from "../types";
 import { categories, IMG, userInitials } from "../utils/marketplace";
 import { Icon, Logo } from "../components/ui";
 import { PhotoStep } from "./sell/PhotoStep";
+import { deleteDraft, getDraft, saveDraft } from "../api/drafts";
 import {
   DESCRIPTION_MAX,
   emptySellForm,
@@ -48,15 +49,23 @@ export default function SellPage({
   user,
   onCreateProduct,
   onSelectProduct,
+  draftId = null,
 }: {
   setPage: (p: Page) => void;
   location?: LocationPreference;
   user?: UserProfile;
   onCreateProduct?: (product: Omit<Product, "id">) => Promise<Product>;
   onSelectProduct?: (productId: number) => void;
+  /** When set, the form starts with this saved draft */
+  draftId?: string | null;
 }) {
   const [step, setStep] = useState(1);
-  const [form, setForm] = useState<SellFormData>(emptySellForm);
+  // Start with the saved draft (if any), otherwise an empty form
+  const [form, setForm] = useState<SellFormData>(
+    () => (draftId && getDraft(draftId)?.data) || emptySellForm,
+  );
+  const [currentDraftId, setCurrentDraftId] = useState<string | null>(draftId);
+  const [draftMessage, setDraftMessage] = useState("");
   const [errors, setErrors] = useState<SellFormErrors>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
@@ -97,6 +106,16 @@ export default function SellPage({
       return;
     }
     goToStep(step + 1);
+  };
+
+  const handleSaveDraft = () => {
+    const saved = saveDraft(form, currentDraftId ?? undefined);
+    if (saved) {
+      setCurrentDraftId(saved.id);
+      setDraftMessage("Draft saved. You can continue later from My listings > Drafts.");
+    } else {
+      setDraftMessage("Draft could not be saved: browser storage is full. Try fewer photos.");
+    }
   };
 
   const handlePublish = async () => {
@@ -140,6 +159,11 @@ export default function SellPage({
     setSubmitError("");
     try {
       setCreatedProduct(await onCreateProduct(newProduct));
+      // The draft is now a real listing, so remove it from Drafts
+      if (currentDraftId) {
+        deleteDraft(currentDraftId);
+        setCurrentDraftId(null);
+      }
     } catch {
       setSubmitError("Your listing could not be posted. Please try again.");
     } finally {
@@ -202,8 +226,8 @@ export default function SellPage({
           ‹ Cancel
         </button>
         <Logo onClick={() => setPage("home")} />
-        <button type="button" onClick={() => setPage("my-ads")}>
-          My listings
+        <button type="button" onClick={handleSaveDraft}>
+          Save draft
         </button>
       </div>
 
@@ -227,6 +251,9 @@ export default function SellPage({
           else handleNext();
         }}
       >
+        <p className="draft-message" role="status">
+          {draftMessage}
+        </p>
         <div className="step-label">Step {step} of 5</div>
         <h1 ref={headingRef} tabIndex={-1}>
           {STEP_TITLES[step - 1]}
