@@ -337,3 +337,75 @@
 .empty-account p {
   color: var(--muted);
 }
+
+/* ---- Seller dashboard (My listings) ---- */
+.listing-stats span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.manage-actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.manage-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+.danger-btn {
+  color: var(--danger) !important;
+}
+.danger-btn:hover {
+  border-color: var(--danger) !important;
+}
+.manage-copy .status-reserved {
+  background: #45361e;
+  color: #f4ca82;
+}
+.manage-copy .status-sold {
+  background: var(--line);
+  color: var(--muted);
+}
+.manage-copy .status-draft {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+/* Edit listing pop-up */
+.edit-listing-modal {
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+}
+.edit-listing-modal input,
+.edit-listing-modal select,
+.edit-listing-modal textarea {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--canvas);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 400;
+}
+.edit-listing-modal .modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 22px;
+}
+.edit-listing-modal .modal-actions .primary {
+  width: auto;
+  margin-top: 0;
+}
+.modal-close {
+  color: var(--ink);
+  cursor: pointer;
+}
+
+@media (max-width: 720px) {
+  .manage-actions {
+    justify-content: flex-start;
+  }
+}

@@ -517,3 +517,14 @@
     height: 90px;
   }
 }
+
+/* "Draft saved" message on the sell page */
+.draft-message {
+  margin: 0 0 12px;
+  color: var(--success);
+  font-weight: 600;
+  font-size: 14px;
+}
+.draft-message:empty {
+  display: none;
+}

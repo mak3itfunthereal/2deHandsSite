@@ -128,6 +128,20 @@ export const api = {
     return created;
   },
 
+  /** Save changes to an existing listing (edit, mark as sold, ...). */
+  async updateProduct(product: Product): Promise<Product> {
+    if (API_BASE_URL) {
+      try {
+        return await rawApiClient.updateProduct(product);
+      } catch (err) {
+        console.warn(`Backend API updateProduct(${product.id}) failed, saving locally:`, err);
+      }
+    }
+    const current = getLocalProducts();
+    saveLocalProducts(current.map((p) => (p.id === product.id ? product : p)));
+    return product;
+  },
+
   async deleteProduct(id: number | string): Promise<boolean> {
     if (API_BASE_URL) {
       try {

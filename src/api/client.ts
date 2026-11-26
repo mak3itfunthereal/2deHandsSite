@@ -140,6 +140,12 @@ export function createApiClient(
         body: JSON.stringify(product),
       }),
 
+    updateProduct: (product: Partial<Product> & { id: number }) =>
+      request<Product>(`products/${product.id}`, {
+        method: "PUT",
+        body: JSON.stringify(product),
+      }),
+
     deleteProduct: (id: number | string) =>
       request<{ success: boolean }>(`products/${id}`, { method: "DELETE" }),
 
