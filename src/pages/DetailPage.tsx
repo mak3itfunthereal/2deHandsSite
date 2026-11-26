@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import type { Page, Product } from "../types";
+import type { Page, Product, Review } from "../types";
 import { products as defaultProducts } from "../utils/marketplace";
 import { Icon, ProductGrid, RowTitle } from "../components/ui";
 import { FALLBACK_IMAGE } from "../components/ProductCard";
+import { getReviewSummary } from "../utils/reviews";
 
 export default function DetailPage({
   setPage,
@@ -14,6 +15,8 @@ export default function DetailPage({
   onSelectProduct,
   onBuyProduct,
   onAddBid,
+  reviews = [],
+  onSubmitReview,
 }: {
   setPage: (p: Page) => void;
   productId?: number | null;
@@ -27,6 +30,8 @@ export default function DetailPage({
     productId: number,
     bid: { id: string; bidderName: string; amount: number; time: string },
   ) => void;
+  reviews?: Review[];
+  onSubmitReview?: (review: Omit<Review, "id" | "createdAt">) => void;
 }) {
   const product = useMemo(() => {
     if (productId != null) {
@@ -51,6 +56,9 @@ export default function DetailPage({
   const [paymentMethod, setPaymentMethod] = useState("iDEAL");
   const [paymentBank, setPaymentBank] = useState("ING");
   const [orderReference, setOrderReference] = useState("");
+  const [reviewOpen, setReviewOpen] = useState(false);
+  const [reviewRating, setReviewRating] = useState(0);
+  const [reviewComment, setReviewComment] = useState("");
 
   const highestBid = useMemo(() => {
     if (!product?.bids || product.bids.length === 0) return 0;
@@ -61,6 +69,8 @@ export default function DetailPage({
   const shippingCost = deliveryMethod === "shipping" ? 4.95 : 0;
   const buyerProtectionCost = 0.99;
   const totalAmount = (itemPrice + shippingCost + buyerProtectionCost).toFixed(2);
+  const sellerName = product?.sellerName || "Seller 1";
+  const reviewSummary = getReviewSummary(sellerName, reviews);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -127,6 +137,20 @@ export default function DetailPage({
       onBuyProduct(product.id);
     }
     setCheckoutSuccess(true);
+    setReviewOpen(true);
+  };
+
+  const handleSubmitReview = () => {
+    if (!product || !reviewRating || !reviewComment.trim() || !onSubmitReview) return;
+    onSubmitReview({
+      sellerName,
+      rating: reviewRating,
+      comment: reviewComment.trim(),
+      reviewerName: "You",
+    });
+    setReviewOpen(false);
+    setReviewRating(0);
+    setReviewComment("");
   };
 
   if (!product) {
@@ -337,7 +361,10 @@ export default function DetailPage({
             <div>
               <h3>{product.sellerName || "Seller 1"}</h3>
               <p>
-                <span className="stars">★★★★★</span> 4,9 · 15 reviews
+                <span className="stars" aria-label={`${reviewSummary.average.toFixed(1)} out of 5 stars`}>
+                  {"★★★★★"}
+                </span>{" "}
+                {reviewSummary.average.toFixed(1)} · {reviewSummary.count} reviews
               </p>
             </div>
             {product.sellerVerified !== false && (
@@ -638,9 +665,56 @@ export default function DetailPage({
                   >
                     Chat with seller
                   </button>
+                  <button className="secondary" type="button" onClick={() => setReviewOpen(true)}>
+                    Rate seller
+                  </button>
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {reviewOpen && (
+        <div className="modal-backdrop" onClick={() => setReviewOpen(false)}>
+          <div className="modal review-modal" onClick={(event) => event.stopPropagation()}>
+            <button className="modal-close" onClick={() => setReviewOpen(false)} type="button">
+              <Icon name="close" />
+            </button>
+            <span className="eyebrow">Deal completed</span>
+            <h2>How was your experience?</h2>
+            <p>Rate {sellerName} and help other buyers make a confident choice.</p>
+            <div className="review-stars" role="radiogroup" aria-label="Seller rating">
+              {[1, 2, 3, 4, 5].map((rating) => (
+                <button
+                  key={rating}
+                  type="button"
+                  className={rating <= reviewRating ? "selected" : ""}
+                  aria-label={`${rating} star${rating === 1 ? "" : "s"}`}
+                  aria-pressed={rating === reviewRating}
+                  onClick={() => setReviewRating(rating)}
+                >
+                  <Icon name="star" size={32} fill={rating <= reviewRating ? "currentColor" : "none"} />
+                </button>
+              ))}
+            </div>
+            <label>
+              Short review
+              <textarea
+                value={reviewComment}
+                onChange={(event) => setReviewComment(event.target.value)}
+                placeholder="What went well?"
+                maxLength={300}
+              />
+            </label>
+            <button
+              className="primary"
+              type="button"
+              disabled={!reviewRating || !reviewComment.trim()}
+              onClick={handleSubmitReview}
+            >
+              Submit review
+            </button>
           </div>
         </div>
       )}

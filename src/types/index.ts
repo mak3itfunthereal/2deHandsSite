@@ -18,6 +18,15 @@ export type UserProfile = {
   avatar?: string;
 };
 
+export type Review = {
+  id: string;
+  sellerName: string;
+  rating: number;
+  comment: string;
+  reviewerName: string;
+  createdAt: string;
+};
+
 export type ConsentPreferences = {
   personalization: boolean;
   location: boolean;

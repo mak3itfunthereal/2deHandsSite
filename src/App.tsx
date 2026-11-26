@@ -5,6 +5,7 @@ import type {
   LocationPreference,
   Page,
   Product,
+  Review,
   UserProfile,
 } from "./types";
 import {
@@ -28,6 +29,7 @@ import SettingsPage from "./pages/SettingsPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import { loadFavorites, saveFavorites } from "./api/favorites";
+import { loadReviews, saveReviews } from "./utils/reviews";
 
 function loadStoredFavorites(): Set<number> {
   return new Set(loadFavorites());
@@ -113,6 +115,7 @@ export default function App() {
   const [user, setUser] = useState<UserProfile>(loadStoredUser);
   const [location, setLocation] = useState<LocationPreference>(loadStoredLocation);
   const [favorites, setFavorites] = useState<Set<number>>(loadStoredFavorites);
+  const [reviews, setReviews] = useState<Review[]>(loadReviews);
   const [notice, setNotice] = useState("");
   const [showConsent, setShowConsent] = useState(
     () => !document.cookie.includes("bidzaar_cookie_consent="),
@@ -211,6 +214,10 @@ export default function App() {
   }, [favorites]);
 
   useEffect(() => {
+    saveReviews(reviews);
+  }, [reviews]);
+
+  useEffect(() => {
     window.scrollTo(0, 0);
   }, [page, selectedProductId]);
 
@@ -307,6 +314,14 @@ export default function App() {
     setNotice("Order placed! Your purchase is protected by Buyer Protection.");
   };
 
+  const handleSubmitReview = (review: Omit<Review, "id" | "createdAt">) => {
+    setReviews((previous) => [
+      ...previous,
+      { ...review, id: `review-${Date.now()}`, createdAt: "Just now" },
+    ]);
+    setNotice("Thank you for reviewing the seller.");
+  };
+
   const handleAddBid = (
     productId: number,
     bid: { id: string; bidderName: string; amount: number; time: string },
@@ -383,6 +398,8 @@ export default function App() {
           onSelectProduct={handleSelectProduct}
           onBuyProduct={handleBuyProduct}
           onAddBid={handleAddBid}
+          reviews={reviews}
+          onSubmitReview={handleSubmitReview}
         />
       );
     if (page === "chat")
@@ -478,6 +495,7 @@ export default function App() {
           location={location}
           products={productsList}
           onSelectProduct={handleSelectProduct}
+          reviews={reviews}
         />
       );
     return (
@@ -502,6 +520,7 @@ export default function App() {
     searchQuery,
     selectedCategory,
     activeConversationId,
+    reviews,
   ]);
 
   return (

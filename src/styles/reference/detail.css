@@ -346,6 +346,32 @@
   width: 100%;
   margin-top: 20px;
 }
+.modal .primary:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  transform: none;
+}
+.review-modal p {
+  line-height: 1.5;
+}
+.review-stars {
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+  margin: 24px 0 8px;
+}
+.review-stars button {
+  border: 0;
+  background: transparent;
+  color: var(--line);
+  padding: 3px;
+}
+.review-stars button.selected {
+  color: #e89225;
+}
+.review-stars button:hover {
+  color: #e89225;
+}
 .toast {
   position: fixed;
   z-index: 120;

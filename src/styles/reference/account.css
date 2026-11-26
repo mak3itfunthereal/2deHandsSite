@@ -47,6 +47,14 @@
 .profile-summary .verified {
   margin: 0;
 }
+.profile-rating {
+  margin: 7px 0 0;
+  font-size: 13px;
+}
+.profile-rating .stars {
+  color: #e89225;
+  letter-spacing: 1px;
+}
 .account-layout {
   display: grid;
   grid-template-columns: 250px 1fr;

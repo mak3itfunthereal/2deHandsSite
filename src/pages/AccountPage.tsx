@@ -1,7 +1,8 @@
 import { useState } from "react";
-import type { LocationPreference, Page, Product, UserProfile } from "../types";
+import type { LocationPreference, Page, Product, Review, UserProfile } from "../types";
 import { products as defaultProducts, userFullName, userInitials } from "../utils/marketplace";
 import { Icon, ProductGrid } from "../components/ui";
+import { getReviewSummary } from "../utils/reviews";
 
 export default function AccountPage({
   setPage,
@@ -11,6 +12,7 @@ export default function AccountPage({
   location,
   products = defaultProducts,
   onSelectProduct,
+  reviews = [],
 }: {
   setPage: (p: Page) => void;
   favorites: Set<number>;
@@ -19,12 +21,14 @@ export default function AccountPage({
   location?: LocationPreference;
   products?: Product[];
   onSelectProduct?: (productId: number) => void;
+  reviews?: Review[];
 }) {
   const [tab, setTab] = useState<"ads" | "favorites" | "settings">("favorites");
   const [priceAlerts, setPriceAlerts] = useState(true);
 
   const favoritedProducts = products.filter((p) => favorites.has(p.id));
   const myAds = products.filter((p) => p.isUserAd || p.id === 1);
+  const profileReviews = getReviewSummary(userFullName(user), reviews);
 
   return (
     <main className="shell account-page">
@@ -40,6 +44,12 @@ export default function AccountPage({
             <span className="verified">
               <Icon name="check" size={13} /> Email and phone verified
             </span>
+            <p className="profile-rating">
+              <span className="stars" aria-label={`${profileReviews.average.toFixed(1)} out of 5 stars`}>
+                ★★★★★
+              </span>{" "}
+              {profileReviews.average.toFixed(1)} · {profileReviews.count} reviews
+            </p>
           </div>
           <button className="secondary" onClick={() => setPage("settings")}>
             Edit profile
