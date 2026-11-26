@@ -2,10 +2,29 @@ import { useState } from "react";
 import type { ConsentPreferences } from "../types";
 import { Icon } from "./Icon";
 
+function loadConsentPreferences(): ConsentPreferences {
+  try {
+    const stored: unknown = JSON.parse(window.localStorage.getItem("bidzaar-consent") || "null");
+    if (
+      typeof stored === "object" &&
+      stored !== null &&
+      "personalization" in stored &&
+      typeof stored.personalization === "boolean" &&
+      "location" in stored &&
+      typeof stored.location === "boolean"
+    ) {
+      return { personalization: stored.personalization, location: stored.location };
+    }
+  } catch {
+    // Invalid saved preferences fall back to the initial choices.
+  }
+  return { personalization: true, location: true };
+}
+
 export function CookieConsent({ onSave }: { onSave: (preferences: ConsentPreferences) => void }) {
   const [details, setDetails] = useState(false);
-  const [personalization, setPersonalization] = useState(true);
-  const [locationPermission, setLocationPermission] = useState(true);
+  const [preferences, setPreferences] = useState(loadConsentPreferences);
+  const { personalization, location: locationPermission } = preferences;
   return (
     <div className="cookie-backdrop" role="dialog" aria-modal="true" aria-labelledby="cookie-title">
       <section className="cookie-card">
@@ -39,7 +58,9 @@ export function CookieConsent({ onSave }: { onSave: (preferences: ConsentPrefere
               <input
                 type="checkbox"
                 checked={personalization}
-                onChange={(event) => setPersonalization(event.target.checked)}
+                onChange={(event) =>
+                  setPreferences((current) => ({ ...current, personalization: event.target.checked }))
+                }
               />
             </label>
             <label>
@@ -50,30 +71,30 @@ export function CookieConsent({ onSave }: { onSave: (preferences: ConsentPrefere
               <input
                 type="checkbox"
                 checked={locationPermission}
-                onChange={(event) => setLocationPermission(event.target.checked)}
+                onChange={(event) =>
+                  setPreferences((current) => ({ ...current, location: event.target.checked }))
+                }
               />
             </label>
           </div>
         )}
         <div className="cookie-actions">
-          <button className="text-button" onClick={() => setDetails(!details)}>
+          <button className="text-button" type="button" onClick={() => setDetails(!details)}>
             {details ? "Hide preferences" : "Set preferences"}
           </button>
           <div>
             <button
               className="secondary"
+              type="button"
               onClick={() => onSave({ personalization: false, location: false })}
             >
               Essential only
             </button>
             <button
               className="primary"
+              type="button"
               onClick={() =>
-                onSave(
-                  details
-                    ? { personalization, location: locationPermission }
-                    : { personalization: true, location: true },
-                )
+                onSave(details ? preferences : { personalization: true, location: true })
               }
             >
               {details ? "Save choices" : "Accept all"}

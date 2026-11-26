@@ -106,6 +106,12 @@ export function createApiClient(
       return account;
     },
 
+    deleteCurrentAccount: (reason?: string) =>
+      request<void>("accounts/me", {
+        method: "DELETE",
+        body: JSON.stringify({ reason }),
+      }),
+
     forgotPassword: (email: string) =>
       request<{ message: string }>("accounts/forgot-password", {
         method: "POST",
