@@ -13,6 +13,7 @@ export default function SettingsPage({
   setDark,
   onLogout,
   onDeleteAccount,
+  onManageCookiePreferences,
 }: {
   setPage: (p: Page) => void;
   user: UserProfile;
@@ -22,7 +23,8 @@ export default function SettingsPage({
   dark?: boolean;
   setDark?: (v: boolean) => void;
   onLogout?: () => void;
-  onDeleteAccount?: () => void;
+  onDeleteAccount?: (reason?: string) => Promise<void>;
+  onManageCookiePreferences?: () => void;
 }) {
   const [section, setSection] = useState<
     "Profile" | "Notifications" | "Privacy & security" | "Payments" | "Display & region"
@@ -60,6 +62,8 @@ export default function SettingsPage({
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteReason, setDeleteReason] = useState("");
   const [confirmDeleteChecked, setConfirmDeleteChecked] = useState(false);
+  const [deletingAccount, setDeletingAccount] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
 
   useEffect(() => {
     setProfileDraft(user);
@@ -99,8 +103,24 @@ export default function SettingsPage({
   };
 
   const handleClearHistory = () => {
+    window.localStorage.removeItem("bidzaar-recent-searches");
     setHistoryCleared(true);
     setTimeout(() => setHistoryCleared(false), 3000);
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!onDeleteAccount || deletingAccount) return;
+    setDeletingAccount(true);
+    setDeleteError("");
+    try {
+      await onDeleteAccount(deleteReason);
+      setShowDeleteModal(false);
+      setConfirmDeleteChecked(false);
+    } catch (error) {
+      setDeleteError(error instanceof Error ? error.message : "Account deletion failed.");
+    } finally {
+      setDeletingAccount(false);
+    }
   };
 
   const save = () => {
@@ -359,11 +379,28 @@ export default function SettingsPage({
 
               <h3 className="settings-section-title">Data & privacy</h3>
               <div className="sub-card">
+                {onManageCookiePreferences && (
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "16px" }}>
+                    <div>
+                      <b style={{ fontSize: "14px" }}>Cookie preferences</b>
+                      <p style={{ margin: "4px 0 0", color: "var(--muted)", fontSize: "13px" }}>
+                        Choose whether to allow personalized recommendations and location use.
+                      </p>
+                    </div>
+                    <button
+                      className="secondary"
+                      type="button"
+                      onClick={onManageCookiePreferences}
+                    >
+                      Manage preferences
+                    </button>
+                  </div>
+                )}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <div>
-                    <b style={{ fontSize: "14px" }}>Clear search history and cookies</b>
+                    <b style={{ fontSize: "14px" }}>Clear search history</b>
                     <p style={{ margin: "4px 0 0", color: "var(--muted)", fontSize: "13px" }}>
-                      Delete all locally stored searches and cache.
+                      Remove searches saved in this browser.
                     </p>
                   </div>
                   <button className="secondary" type="button" onClick={handleClearHistory}>
@@ -386,7 +423,7 @@ export default function SettingsPage({
                   <div>
                     <b style={{ fontSize: "14px", display: "block" }}>Close account</b>
                     <p style={{ margin: "4px 0 0", color: "var(--muted)", fontSize: "13px" }}>
-                      Account deletion is not available yet.
+                      Permanently delete your account and personal data.
                     </p>
                   </div>
                   {onDeleteAccount && (
@@ -597,20 +634,33 @@ export default function SettingsPage({
 
       {/* CLOSE ACCOUNT CONFIRMATION MODAL */}
       {showDeleteModal && (
-        <div className="modal-backdrop" onClick={() => setShowDeleteModal(false)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="modal-backdrop"
+          onClick={() => {
+            if (!deletingAccount) setShowDeleteModal(false);
+          }}
+        >
+          <div
+            className="modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-account-title"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
               className="modal-close"
               onClick={() => {
                 setShowDeleteModal(false);
                 setConfirmDeleteChecked(false);
+                setDeleteError("");
               }}
+              disabled={deletingAccount}
               type="button"
             >
               <Icon name="close" />
             </button>
             <span className="eyebrow">Close account</span>
-            <h2>Are you sure you want to close your account?</h2>
+            <h2 id="delete-account-title">Are you sure you want to close your account?</h2>
             <p style={{ margin: "10px 0 16px", color: "var(--muted)", fontSize: "14px", lineHeight: 1.5 }}>
               We're sorry to see you go. If you close your account:
             </p>
@@ -682,6 +732,11 @@ export default function SettingsPage({
                 I understand that all my listings and messages will be permanently deleted.
               </span>
             </label>
+            {deleteError && (
+              <p role="alert" style={{ color: "#dc2626", fontSize: "13px", margin: "12px 0" }}>
+                {deleteError}
+              </p>
+            )}
             <div
               style={{
                 display: "flex",
@@ -693,9 +748,11 @@ export default function SettingsPage({
               <button
                 className="secondary"
                 type="button"
+                disabled={deletingAccount}
                 onClick={() => {
                   setShowDeleteModal(false);
                   setConfirmDeleteChecked(false);
+                  setDeleteError("");
                 }}
               >
                 Keep account
@@ -703,17 +760,14 @@ export default function SettingsPage({
               <button
                 className="btn-danger"
                 type="button"
-                disabled={!confirmDeleteChecked}
+                disabled={!confirmDeleteChecked || deletingAccount}
                 style={{
-                  opacity: confirmDeleteChecked ? 1 : 0.45,
-                  cursor: confirmDeleteChecked ? "pointer" : "not-allowed",
+                  opacity: confirmDeleteChecked && !deletingAccount ? 1 : 0.45,
+                  cursor: confirmDeleteChecked && !deletingAccount ? "pointer" : "not-allowed",
                 }}
-                onClick={() => {
-                  setShowDeleteModal(false);
-                  onDeleteAccount?.();
-                }}
+                onClick={handleDeleteAccount}
               >
-                Close account permanently
+                {deletingAccount ? "Deleting account…" : "Close account permanently"}
               </button>
             </div>
           </div>

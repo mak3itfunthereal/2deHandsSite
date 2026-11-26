@@ -483,6 +483,22 @@ export default function App() {
     setNotice("You have been logged out.");
   };
 
+  const handleDeleteAccount = async (reason?: string) => {
+    await rawApiClient.deleteCurrentAccount(reason);
+    clearSession();
+    window.localStorage.removeItem("bidzaar-user");
+    window.localStorage.removeItem("bidzaar-recent-searches");
+    window.localStorage.removeItem("bidzaar-saved-searches");
+    window.localStorage.removeItem("bidzaar-conversations-cache");
+    setSession(null);
+    setAccount(null);
+    setUser({ firstName: "", lastName: "", email: "" });
+    setFavorites(new Set());
+    setAuthError("");
+    setPage("home");
+    setNotice("Your account has been deleted.");
+  };
+
   const handleLogin = async (email: string, password: string) => {
     const nextSession = await rawApiClient.login(email, password);
     const current = await rawApiClient.getCurrentAccount(nextSession.token);
@@ -581,6 +597,8 @@ export default function App() {
           dark={dark}
           setDark={setDark}
           onLogout={handleLogout}
+          onDeleteAccount={handleDeleteAccount}
+          onManageCookiePreferences={() => setShowConsent(true)}
         />
       );
     if (page === "login")

@@ -42,3 +42,24 @@ test("createApiClient handles createProduct POST request", async () => {
   assert.equal(created.id, 99);
   assert.ok(body.includes("Nieuwe Fiets"));
 });
+
+test("deleteCurrentAccount sends an authenticated DELETE request with the leaving reason", async () => {
+  let requestedUrl = "";
+  let requestOptions;
+
+  const client = createApiClient("http://localhost:3000/api", async (url, options) => {
+    requestedUrl = String(url);
+    requestOptions = options;
+    return { ok: true, text: async () => "" };
+  }, {
+    getToken: () => "session-token",
+    onUnauthorized: () => {},
+  });
+
+  await client.deleteCurrentAccount("Privacy reasons");
+
+  assert.equal(requestedUrl, "http://localhost:3000/api/accounts/me");
+  assert.equal(requestOptions.method, "DELETE");
+  assert.equal(requestOptions.headers.get("Authorization"), "Bearer session-token");
+  assert.deepEqual(JSON.parse(requestOptions.body), { reason: "Privacy reasons" });
+});
